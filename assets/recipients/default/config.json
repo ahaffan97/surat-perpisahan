@@ -1,0 +1,27 @@
+{
+  "namaLengkap": "Sahabat Seperjuangan",
+  "pesan": "Terima kasih yang mendalam untuk seluruh kebersamaan, dukungan, dan memori indah yang telah kita ukir bersama. Setiap tawa, tantangan, dan cerita yang kita lalui menjadi bagian tak terpisahkan dari perjalanan berharga ini. Semoga kebaikan dan energi positif ini selalu menyertai setiap langkahmu menuju puncak kesuksesan.",
+  "pesanBelakang": "Perpisahan ini bukanlah akhir, melainkan awal dari babak baru yang penuh dengan potensi dan kejayaan. Semoga kesuksesan dan kebahagiaan selalu menyertaimu!",
+  "fotoUtama": [
+    {
+      "src": "assets/recipients/default/foto/wide_team_memory.png",
+      "caption": "Perayaan Perpisahan Tim 🎉"
+    },
+    {
+      "src": "assets/recipients/default/foto/wide_office_moments.png",
+      "caption": "Momen Kebersamaan Kantor ☕"
+    },
+    {
+      "src": "assets/recipients/default/foto/slideshow_memory_3.png",
+      "caption": "Kehangatan Kebersamaan 🎂"
+    },
+    {
+      "src": "assets/recipients/default/foto/slideshow_memory_4.png",
+      "caption": "Momen Indah Berdua & Tim 🌳"
+    }
+  ],
+  "fotoBelakang": "",
+  "fileLagu": "assets/audio/sampai_jumpa.mp3",
+  "fileVoiceNote": "assets/recipients/default/audio/voice_note.wav",
+  "fileVideo": "assets/video/farewell.mp4"
+}

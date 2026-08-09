@@ -1,0 +1,21 @@
+{
+  "namaLengkap": "Departemen Ternak",
+  "pesan": "Terima kasih yang sebesar-besarnya untuk seluruh tim & rekan-rekan di Departemen Ternak PT. Graha Inti Jaya atas kerja keras, dedikasi, kekompakan, dan kebersamaan yang luar biasa selama ini. Setiap momen perjuangan di lapangan, diskusi hangat, dan tawa bersama akan selalu menjadi kenangan manis dan berharga dalam perjalanan ini.",
+  "pesanBelakang": "\"Kebersamaan dalam kerja keras adalah kunci keberhasilan yang sesungguhnya. Terima kasih atas dedikasi dan kontribusi luar biasa Departemen Ternak!\"\n\nSemoga seluruh tim Departemen Ternak semakin solid, sukses, dan terus berkembang mencapai prestasi-prestasi terbaik di masa depan! 🌾🐮✨",
+  "fotoUtama": [
+    {
+      "src": "assets/recipients/departemen_ternak/foto/wide_team_memory.png",
+      "caption": "Momen Kebersamaan Departemen Ternak 🎉",
+      "diari": "Hangatnya persaudaraan dan kebersamaan tim Departemen Ternak."
+    },
+    {
+      "src": "assets/recipients/departemen_ternak/foto/wide_office_moments.png",
+      "caption": "Diskusi & Kekompakan Lapangan ☕",
+      "diari": "Setiap momen kerja keras dan diskusi penuh semangat."
+    }
+  ],
+  "fotoBelakang": "",
+  "fileLagu": "assets/audio/sampai_jumpa.mp3",
+  "fileVoiceNote": "assets/recipients/departemen_ternak/audio/voice_note.wav",
+  "fileVideo": "assets/video/farewell.mp4"
+}

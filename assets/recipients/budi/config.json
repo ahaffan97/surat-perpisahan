@@ -1,0 +1,27 @@
+{
+  "namaLengkap": "Budi Santoso",
+  "pesan": "Terima kasih banyak Budi atas kebersamaan, keceriaan, dan kerja keras kita selama ini. Banyak momen berharga yang telah kita lalui bersama di tim. Setiap diskusi, canda tawa, dan kerja sama yang solid selalu membuat suasana kerja menjadi hangat dan berkesan. Semoga di tempat dan langkah barumu ini, kamu semakin sukses, berkembang pesat, dan selalu dilimpahi kebahagiaan!",
+  "pesanBelakang": "Semoga sukses selalu di tempat baru Budi! Jangan lupa tetap kontak dan kabari kalau main ke Malang, Medan, Banjarmasin, atau Jakarta ya! 🚀✨",
+  "fotoUtama": [
+    {
+      "src": "assets/recipients/budi/foto/wide_team_memory.png",
+      "caption": "Kenangan Tim Farewell 💖"
+    },
+    {
+      "src": "assets/recipients/budi/foto/wide_office_moments.png",
+      "caption": "Momen Canda Tawa Kantor ☕"
+    },
+    {
+      "src": "assets/recipients/budi/foto/slideshow_memory_3.png",
+      "caption": "Momen Spesial & Kue Perpisahan 🎂"
+    },
+    {
+      "src": "assets/recipients/budi/foto/slideshow_memory_4.png",
+      "caption": "Selfie Kebersamaan Taman 🌳"
+    }
+  ],
+  "fotoBelakang": "",
+  "fileLagu": "assets/audio/sampai_jumpa.mp3",
+  "fileVoiceNote": "assets/recipients/budi/audio/voice_note.wav",
+  "fileVideo": "assets/video/farewell.mp4"
+}

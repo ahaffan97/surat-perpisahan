@@ -1,0 +1,27 @@
+{
+  "namaLengkap": "Siti Rahmawati",
+  "pesan": "Untuk Siti, terima kasih atas dedikasi luar biasa dan senyuman hangat yang selalu mewarnai ruang kerja kita. Setiap kolaborasi dan projek bareng selalu memberikan kesan manis dan pelajaran berharga. Teruslah menginspirasi dan meraih pencapaian gemilang di petualangan barumu berikutnya!",
+  "pesanBelakang": "Sukses terus Siti untuk karier dan impian-impian besar barumu. Tetap semangat, berkarya, dan bahagia selalu! ✨🌸",
+  "fotoUtama": [
+    {
+      "src": "assets/recipients/siti/foto/wide_office_moments.png",
+      "caption": "Kebersamaan & Tawa 🌸"
+    },
+    {
+      "src": "assets/recipients/siti/foto/wide_team_memory.png",
+      "caption": "Foto Memori Tim 🎉"
+    },
+    {
+      "src": "assets/recipients/siti/foto/slideshow_memory_3.png",
+      "caption": "Potong Kue & Doa Bersama 🎂"
+    },
+    {
+      "src": "assets/recipients/siti/foto/slideshow_memory_4.png",
+      "caption": "Jalan-jalan Bersama Tim 🌳"
+    }
+  ],
+  "fotoBelakang": "",
+  "fileLagu": "assets/audio/sampai_jumpa.mp3",
+  "fileVoiceNote": "assets/recipients/siti/audio/voice_note.wav",
+  "fileVideo": "assets/video/farewell.mp4"
+}

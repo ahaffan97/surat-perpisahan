@@ -1,0 +1,31 @@
+{
+  "namaLengkap": "Bang Rikson",
+  "pesan": "Terima kasih yang mendalam untuk Bang Rikson atas kebersamaan, dukungan, dan kerja keras yang luar biasa selama ini di PT. Graha Inti Jaya. Setiap diskusi, canda tawa, dan perjuangan bersama selalu menjadi kenangan manis yang sangat berharga.",
+  "pesanBelakang": "Semoga sukses selalu di setiap langkah barumu Bang Rikson! Tetap terhubung dan terus berkarya! 🚀✨",
+  "fotoUtama": [
+    {
+      "src": "assets/recipients/rikson/foto/wide_team_memory.png",
+      "caption": "Kenangan Tim PT. GIJ 🎉",
+      "diari": "Momen kebersamaan tim yang penuh dengan tawa dan hangat persaudaraan."
+    },
+    {
+      "src": "assets/recipients/rikson/foto/wide_office_moments.png",
+      "caption": "Diskusi & Kebersamaan ☕",
+      "diari": "Setiap perbincangan hangat di kantor yang selalu menginspirasi dan menghibur."
+    },
+    {
+      "src": "assets/recipients/rikson/foto/slideshow_memory_3.png",
+      "caption": "Momen Perayaan Spesial 🎂",
+      "diari": "Perayaan kejutan dan kehangatan yang tak akan pernah terlupakan."
+    },
+    {
+      "src": "assets/recipients/rikson/foto/slideshow_memory_4.png",
+      "caption": "Foto Bersama Outing 🌳",
+      "diari": "Langkah bersama di luar pekerjaan yang menyatukan semangat kita."
+    }
+  ],
+  "fotoBelakang": "",
+  "fileLagu": "assets/audio/sampai_jumpa.mp3",
+  "fileVoiceNote": "assets/recipients/rikson/audio/voice_note.wav",
+  "fileVideo": "assets/video/farewell.mp4"
+}
