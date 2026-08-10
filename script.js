@@ -419,45 +419,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Render Voice Note & Text Reply List
+  // Render Chat Bubbles Wall (Ruang Chat Pop-up Hall of Memory)
   function renderVoiceNoteList() {
-    const vnListContainer = document.getElementById("voice-note-list");
-    if (!vnListContainer) return;
-    vnListContainer.innerHTML = "";
-
-    let items = [];
-
-    // 1. Initial items from config.json
-    if (currentData) {
-      if (Array.isArray(currentData.fileVoiceNote)) {
-        currentData.fileVoiceNote.forEach(item => {
-          items.push({
-            nama: item.nama || currentData.namaLengkap,
-            url: item.url || item,
-            type: "voice"
-          });
-        });
-      } else if (typeof currentData.fileVoiceNote === "string" && currentData.fileVoiceNote.trim() !== "") {
-        items.push({
-          nama: currentData.namaLengkap,
-          url: currentData.fileVoiceNote,
-          type: "voice"
-        });
-      }
-    }
-
-    // 2. User submitted replies from localStorage
-    const userReplies = getStoredReplies();
     const chatWall = document.getElementById("chat-messages-wall");
     if (!chatWall) return;
 
     chatWall.innerHTML = "";
 
-    // Dapatkan semua data balasan (Default + LocalStorage)
-    let list = loadReplies();
-    if (!list || list.length === 0) {
-      list = defaultVoiceNotes;
-    }
+    // Load user submitted replies from localStorage
+    let userReplies = getStoredReplies();
+
+    // Default chat messages if no user replies stored yet
+    let defaultChatList = [
+      { nama: "Bambang", pesan: "Sukses selalu Mas Affan! Terima kasih untuk bimbingan dan kebersamaannya di PT. GIJ.", time: "10:15" },
+      { nama: "Evie", pesan: "Sampai jumpa lagi Mas Affan, jangan lupa sama kami ya!", time: "11:30" },
+      { nama: "Fika", pesan: "Semoga sukses di tempat baru Mas Affan, sehat & bahagia selalu!", time: "12:45" }
+    ];
+
+    let list = userReplies && userReplies.length > 0 ? userReplies : defaultChatList;
 
     list.forEach((item) => {
       const itemNama = item.nama || "Sahabat";
@@ -707,6 +686,10 @@ document.addEventListener("DOMContentLoaded", () => {
         el.style.display = (p === pageId) ? "flex" : "none";
       }
     });
+
+    if (pageId === "page-hall-of-memory") {
+      renderVoiceNoteList();
+    }
   }
 
   // Helper Global: Send Chat Reply Directly inside Chat Room Wall
