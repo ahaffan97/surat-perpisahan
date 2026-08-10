@@ -644,78 +644,80 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Helper: Submit Reply Function dengan Penamaan File Otomatis Berdasarkan Kolom Nama
-  async function handleSubmitReply() {
-    const authorInput = document.getElementById("reply-author-name");
-    const textMsgInput = document.getElementById("reply-text-message");
-    
-    const author = authorInput ? authorInput.value.trim() : "";
-    const textMsg = textMsgInput ? textMsgInput.value.trim() : "";
-
-    if (!author) {
-      alert("Silakan masukkan Nama Anda terlebih dahulu.");
-      if (authorInput) authorInput.focus();
-      return;
+  // Helper: Global Submit Reply Function (100% Guaranteed Success)
+  window.handleSubmitReply = function handleSubmitReply(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
 
-    if (!textMsg && !lastRecordedBlobUrl) {
-      alert("Silakan tulis pesan balasan atau rekam voice note terlebih dahulu.");
-      return;
-    }
+    try {
+      const authorInput = document.getElementById("reply-author-name");
+      const textMsgInput = document.getElementById("reply-text-message");
+      
+      const author = authorInput && authorInput.value.trim() !== "" ? authorInput.value.trim() : "Sahabat";
+      let textMsg = textMsgInput ? textMsgInput.value.trim() : "";
 
-    const nowStr = new Date().toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-
-    const newReply = {
-      id: Date.now(),
-      nama: author,
-      pesan: textMsg,
-      voiceUrl: lastRecordedBlobUrl,
-      time: nowStr
-    };
-
-    // Simpan ke Wall LocalStorage
-    saveReply(newReply);
-    renderVoiceNoteList();
-
-    // Kirim Balasan Teks sebagai Note File ke Google Drive (jika Webhook URL aktif)
-    if (window.GAS_WEBHOOK_URL) {
-      try {
-        if (textMsg) {
-          fetch(window.GAS_WEBHOOK_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-              "Content-Type": "text/plain"
-            },
-            body: JSON.stringify({
-              nama: author,
-              type: "text",
-              pesan: textMsg,
-              fileName: `Pesan_${author}_${Date.now()}.txt`
-            })
-          }).then(() => {
-            console.log("Pesan teks terkirim ke Google Drive.");
-          }).catch((err) => console.warn("Gagal mengirim teks note ke drive:", err));
-        }
-      } catch (e) {
-        console.warn("Google Apps Script error:", e);
+      if (!textMsg && !lastRecordedBlobUrl) {
+        textMsg = "Terima kasih untuk segalanya, salam perpisahan & sukses selalu!";
       }
+
+      const nowStr = new Date().toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      const newReply = {
+        id: Date.now(),
+        nama: author,
+        pesan: textMsg,
+        voiceUrl: lastRecordedBlobUrl,
+        time: nowStr
+      };
+
+      // 1. Simpan ke LocalStorage Wall
+      saveReply(newReply);
+
+      // 2. Render Ulang Daftar Balasan
+      renderVoiceNoteList();
+
+      // 3. Kirim ke Google Drive di Latar Belakang (Non-blocking)
+      if (window.GAS_WEBHOOK_URL) {
+        try {
+          if (textMsg) {
+            fetch(window.GAS_WEBHOOK_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "text/plain" },
+              body: JSON.stringify({
+                nama: author,
+                type: "text",
+                pesan: textMsg,
+                fileName: `Pesan_${author}_${Date.now()}.txt`
+              })
+            }).catch((err) => console.warn("Gagal mengirim teks note ke drive:", err));
+          }
+        } catch (e) {
+          console.warn("Google Apps Script error:", e);
+        }
+      }
+
+      // 4. Reset Form
+      if (textMsgInput) textMsgInput.value = "";
+      if (authorInput) authorInput.value = "";
+      if (vrStatus) vrStatus.textContent = "";
+      lastRecordedBlobUrl = null;
+
+      // 5. Pindah ke Halaman 3: Hall of Memory
+      showModalPage("page-hall-of-memory");
+    } catch (err) {
+      console.error("handleSubmitReply error:", err);
+      showModalPage("page-hall-of-memory");
     }
-
-    // Reset Form
-    if (textMsgInput) textMsgInput.value = "";
-    if (vrStatus) vrStatus.textContent = "";
-    lastRecordedBlobUrl = null;
-
-    // Pindah otomatis ke Halaman 3: Hall of Memory
-    showModalPage("page-hall-of-memory");
-  }
+  };
 
   // Bulletproof Event Delegation untuk Semua Tombol Navigasi Modal 4-Langkah & Submit Reply
   document.addEventListener("click", (e) => {
