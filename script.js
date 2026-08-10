@@ -448,91 +448,103 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. User submitted replies from localStorage
     const userReplies = getStoredReplies();
-    userReplies.forEach(ur => {
-      items.unshift(ur);
-    });
+    const chatWall = document.getElementById("chat-messages-wall");
+    if (!chatWall) return;
 
-    if (items.length > 0) {
-      if (videoVnSection) videoVnSection.style.display = "flex";
-      items.forEach((item) => {
-        if (item.type === "text" || item.pesan) {
-          // Render Text Reply Card
-          const card = document.createElement("div");
-          card.className = "text-reply-card";
-          card.innerHTML = `
-            <div class="tr-author">💬 Balasan dari <strong>${item.nama}</strong></div>
-            <div class="tr-body">"${item.pesan}"</div>
-            <div class="tr-time">📅 ${item.time || "Baru saja"}</div>
-          `;
-          vnListContainer.appendChild(card);
-        }
-        
-        if (item.url || item.voiceUrl) {
-          // Render Voice Note Card
-          const itemNama = item.nama || "Sahabat";
-          const rawUrl = item.url || item.voiceUrl;
-          const streamUrl = getGoogleDriveStreamUrl(rawUrl) || rawUrl;
+    chatWall.innerHTML = "";
 
-          const card = document.createElement("div");
-          card.className = "voice-note-card";
-          card.innerHTML = `
-            <div class="vn-header">
-              <span class="vn-icon">🎙️</span>
-              <span class="vn-title">Voice Note Balasan <strong>${itemNama}</strong></span>
-            </div>
+    // Dapatkan semua data balasan (Default + LocalStorage)
+    let list = loadReplies();
+    if (!list || list.length === 0) {
+      list = defaultVoiceNotes;
+    }
+
+    list.forEach((item) => {
+      const itemNama = item.nama || "Sahabat";
+      const initial = itemNama.charAt(0).toUpperCase();
+      const timeStr = item.time || "Baru saja";
+
+      const bubble = document.createElement("div");
+      bubble.className = "chat-bubble";
+
+      let mediaContent = "";
+      if (item.pesan) {
+        mediaContent += `<div class="chat-text-msg">${item.pesan}</div>`;
+      }
+
+      if (item.url || item.voiceUrl) {
+        const rawUrl = item.url || item.voiceUrl;
+        const streamUrl = getGoogleDriveStreamUrl(rawUrl) || rawUrl;
+        mediaContent += `
+          <div class="chat-vn-player" style="margin-top: 8px;">
             <button class="btn-vn-play" type="button">
               <span class="vn-play-icon">▶️</span>
-              <span class="vn-play-text">Dengarkan Balasan ${itemNama}</span>
+              <span class="vn-play-text">Dengarkan Voice Note ${itemNama}</span>
             </button>
             <audio class="vn-audio-player" src="${streamUrl}" preload="none"></audio>
-          `;
+          </div>
+        `;
+      }
 
-          const btnPlay = card.querySelector(".btn-vn-play");
-          const audioPlayer = card.querySelector(".vn-audio-player");
-          const playIcon = card.querySelector(".vn-play-icon");
-          const playText = card.querySelector(".vn-play-text");
+      bubble.innerHTML = `
+        <div class="chat-avatar">${initial}</div>
+        <div class="chat-content-box">
+          <div class="chat-author-name">${itemNama}</div>
+          ${mediaContent}
+          <div class="chat-time-tag">🕒 ${timeStr}</div>
+        </div>
+      `;
 
-          btnPlay.addEventListener("click", (e) => {
-            e.stopPropagation();
-            document.querySelectorAll(".vn-audio-player").forEach((a) => {
-              if (a !== audioPlayer) {
-                a.pause();
-                const parentCard = a.closest(".voice-note-card");
-                if (parentCard) {
-                  const pIcon = parentCard.querySelector(".vn-play-icon");
-                  const pText = parentCard.querySelector(".vn-play-text");
-                  if (pIcon) pIcon.textContent = "▶️";
-                  if (pText) pText.textContent = `Dengarkan Balasan`;
-                }
+      // Event Listener Play Audio Voice Note di dalam Chat Bubble
+      const btnPlay = bubble.querySelector(".btn-vn-play");
+      if (btnPlay) {
+        const audioPlayer = bubble.querySelector(".vn-audio-player");
+        const playIcon = bubble.querySelector(".vn-play-icon");
+        const playText = bubble.querySelector(".vn-play-text");
+
+        btnPlay.addEventListener("click", (e) => {
+          e.stopPropagation();
+          document.querySelectorAll(".vn-audio-player").forEach((a) => {
+            if (a !== audioPlayer) {
+              a.pause();
+              const pCard = a.closest(".chat-bubble");
+              if (pCard) {
+                const pIcon = pCard.querySelector(".vn-play-icon");
+                const pText = pCard.querySelector(".vn-play-text");
+                if (pIcon) pIcon.textContent = "▶️";
+                if (pText) pText.textContent = "Dengarkan Voice Note";
               }
-            });
-
-            if (audioPlayer.paused) {
-              fadeAudio(bgMusic, 0.1, 500);
-              audioPlayer.play().then(() => {
-                if (playIcon) playIcon.textContent = "⏸️";
-                if (playText) playText.textContent = "Hentikan Suara Balasan";
-              }).catch((err) => {
-                console.warn("Gagal memutar voice note:", err);
-              });
-            } else {
-              audioPlayer.pause();
-              if (playIcon) playIcon.textContent = "▶️";
-              if (playText) playText.textContent = `Dengarkan Balasan ${itemNama}`;
-              fadeAudio(bgMusic, 1.0, 500);
             }
           });
 
+          if (audioPlayer.paused) {
+            fadeAudio(bgMusic, 0.1, 500);
+            audioPlayer.play().then(() => {
+              if (playIcon) playIcon.textContent = "⏸️";
+              if (playText) playText.textContent = "Hentikan Suara";
+            }).catch((err) => console.warn("Gagal memutar audio:", err));
+          } else {
+            audioPlayer.pause();
+            if (playIcon) playIcon.textContent = "▶️";
+            if (playText) playText.textContent = `Dengarkan Voice Note ${itemNama}`;
+            fadeAudio(bgMusic, 1.0, 500);
+          }
+        });
+
+        if (audioPlayer) {
           audioPlayer.addEventListener("ended", () => {
             if (playIcon) playIcon.textContent = "▶️";
-            if (playText) playText.textContent = `Dengarkan Balasan ${itemNama}`;
+            if (playText) playText.textContent = `Dengarkan Voice Note ${itemNama}`;
             fadeAudio(bgMusic, 1.0, 500);
           });
-
-          vnListContainer.appendChild(card);
         }
-      });
-    }
+      }
+
+      chatWall.appendChild(bubble);
+    });
+
+    // Auto scroll ke paling bawah chat room
+    chatWall.scrollTop = chatWall.scrollHeight;
   }
 
   // Live Browser Microphone Recorder
@@ -608,6 +620,68 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Chat Room Mic Recorder Handler (#btn-chat-mic)
+  const btnChatMic = document.getElementById("btn-chat-mic");
+  const chatMicIcon = document.getElementById("chat-mic-icon");
+  const chatRecStatus = document.getElementById("chat-rec-status");
+
+  if (btnChatMic) {
+    btnChatMic.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (!mediaRecorder || mediaRecorder.state === "inactive") {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          audioChunks = [];
+          mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorder.ondataavailable = (ev) => {
+            if (ev.data.size > 0) audioChunks.push(ev.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+            lastRecordedBlobUrl = URL.createObjectURL(audioBlob);
+
+            if (chatRecStatus) chatRecStatus.innerHTML = "✅ Voice note siap! Klik <strong>🚀 Kirim</strong> untuk mengirim.";
+
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = async () => {
+              const base64Data = reader.result.split(",")[1];
+              const senderInput = document.getElementById("chat-sender-name");
+              const senderName = senderInput ? senderInput.value.trim() || "Sahabat" : "Sahabat";
+
+              if (window.GAS_WEBHOOK_URL) {
+                fetch(window.GAS_WEBHOOK_URL, {
+                  method: "POST",
+                  mode: "no-cors",
+                  headers: { "Content-Type": "text/plain" },
+                  body: JSON.stringify({
+                    nama: senderName,
+                    type: "voice",
+                    audioBase64: base64Data,
+                    contentType: "audio/webm"
+                  })
+                }).catch(err => console.warn("Drive voice note upload error:", err));
+              }
+            };
+          };
+
+          mediaRecorder.start();
+          btnChatMic.classList.add("recording");
+          if (chatMicIcon) chatMicIcon.textContent = "⏹️";
+          if (chatRecStatus) chatRecStatus.textContent = "🎙️ Perekaman suara berjalan...";
+        } catch (err) {
+          alert("Izin akses mikrofon dibutuhkan untuk merekam suara di browser.");
+        }
+      } else if (mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        btnChatMic.classList.remove("recording");
+        if (chatMicIcon) chatMicIcon.textContent = "🎙️";
+      }
+    });
+  }
+
   function startTimer() {
     recordSeconds = 0;
     if (vrTimer) vrTimer.textContent = "00:00";
@@ -644,79 +718,58 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Helper: Global Submit Reply Function (100% Guaranteed Success)
-  window.handleSubmitReply = function handleSubmitReply(e) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
+  // Helper Global: Send Chat Reply Directly inside Chat Room Wall
+  window.handleSendChatReply = function handleSendChatReply() {
+    const senderInput = document.getElementById("chat-sender-name");
+    const msgInput = document.getElementById("chat-text-input");
+
+    const senderName = senderInput && senderInput.value.trim() !== "" ? senderInput.value.trim() : "Sahabat";
+    let messageText = msgInput ? msgInput.value.trim() : "";
+
+    if (!messageText && !lastRecordedBlobUrl) {
+      messageText = "Terima kasih untuk segalanya, salam hangat!";
     }
 
-    try {
-      const authorInput = document.getElementById("reply-author-name");
-      const textMsgInput = document.getElementById("reply-text-message");
-      
-      const author = authorInput && authorInput.value.trim() !== "" ? authorInput.value.trim() : "Sahabat";
-      let textMsg = textMsgInput ? textMsgInput.value.trim() : "";
+    const nowStr = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
 
-      if (!textMsg && !lastRecordedBlobUrl) {
-        textMsg = "Terima kasih untuk segalanya, salam perpisahan & sukses selalu!";
+    const newChat = {
+      id: Date.now(),
+      nama: senderName,
+      pesan: messageText,
+      voiceUrl: lastRecordedBlobUrl,
+      time: nowStr
+    };
+
+    // 1. Simpan Balasan Baru ke LocalStorage Wall
+    saveReply(newChat);
+
+    // 2. Render Ulang Chat Bubbles Wall
+    renderVoiceNoteList();
+
+    // 3. Kirim ke Google Drive di Latar Belakang (Non-blocking / Tanpa Redirect)
+    if (window.GAS_WEBHOOK_URL && messageText) {
+      try {
+        fetch(window.GAS_WEBHOOK_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({
+            nama: senderName,
+            type: "text",
+            pesan: messageText,
+            fileName: `Pesan_${senderName}_${Date.now()}.txt`
+          })
+        }).catch(err => console.warn("Background Drive save error:", err));
+      } catch (e) {
+        console.warn("GAS fetch error:", e);
       }
-
-      const nowStr = new Date().toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-
-      const newReply = {
-        id: Date.now(),
-        nama: author,
-        pesan: textMsg,
-        voiceUrl: lastRecordedBlobUrl,
-        time: nowStr
-      };
-
-      // 1. Simpan ke LocalStorage Wall
-      saveReply(newReply);
-
-      // 2. Render Ulang Daftar Balasan
-      renderVoiceNoteList();
-
-      // 3. Kirim ke Google Drive di Latar Belakang (Non-blocking)
-      if (window.GAS_WEBHOOK_URL) {
-        try {
-          if (textMsg) {
-            fetch(window.GAS_WEBHOOK_URL, {
-              method: "POST",
-              mode: "no-cors",
-              headers: { "Content-Type": "text/plain" },
-              body: JSON.stringify({
-                nama: author,
-                type: "text",
-                pesan: textMsg,
-                fileName: `Pesan_${author}_${Date.now()}.txt`
-              })
-            }).catch((err) => console.warn("Gagal mengirim teks note ke drive:", err));
-          }
-        } catch (e) {
-          console.warn("Google Apps Script error:", e);
-        }
-      }
-
-      // 4. Reset Form
-      if (textMsgInput) textMsgInput.value = "";
-      if (authorInput) authorInput.value = "";
-      if (vrStatus) vrStatus.textContent = "";
-      lastRecordedBlobUrl = null;
-
-      // 5. Pindah ke Halaman 3: Hall of Memory
-      showModalPage("page-hall-of-memory");
-    } catch (err) {
-      console.error("handleSubmitReply error:", err);
-      showModalPage("page-hall-of-memory");
     }
+
+    // 4. Reset Input Bar Chat
+    if (msgInput) msgInput.value = "";
+    const recStatus = document.getElementById("chat-rec-status");
+    if (recStatus) recStatus.textContent = "";
+    lastRecordedBlobUrl = null;
   };
 
   // Bulletproof Event Delegation untuk Semua Tombol Navigasi Modal 4-Langkah & Submit Reply
