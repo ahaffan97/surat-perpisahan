@@ -85,7 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const backMessage = document.getElementById("back-message");
 
   const bgMusic = document.getElementById("bg-music");
-  const voiceNote = document.getElementById("voice-note");
 
   // Lightbox Modal DOM
   const lightboxModal = document.getElementById("lightbox-modal");
@@ -182,11 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
       bgMusic.load();
     }
 
-    if (currentData.fileVoiceNote && voiceNote) {
-      voiceNote.pause();
-      voiceNote.src = currentData.fileVoiceNote;
-      voiceNote.load();
-    }
+
 
     // Farewell Video Setup: Detect YouTube link vs Local MP4
     const rawVideoPath = currentData.fileVideo || "assets/video/farewell.mp4";
@@ -310,8 +305,6 @@ document.addEventListener("DOMContentLoaded", () => {
     letterPaper.classList.remove("flipped");
 
     bgMusic.pause();
-    voiceNote.pause();
-    voiceNote.currentTime = 0;
 
     // Trigger Farewell Video Modal popup after letter finishes closing animation (750ms)
     setTimeout(() => {
@@ -333,28 +326,11 @@ document.addEventListener("DOMContentLoaded", () => {
   btnFlipToBack.addEventListener("click", (e) => {
     e.stopPropagation();
     letterPaper.classList.add("flipped");
-
-    fadeAudio(bgMusic, 0.1, 600, () => {
-      try {
-        const vnPromise = voiceNote.play();
-        if (vnPromise !== undefined) {
-          vnPromise.catch((err) => {
-            console.warn("Gagal memutar voice note:", err);
-          });
-        }
-      } catch (e) {
-        console.warn("Voice note exception:", e);
-      }
-    });
   });
 
   btnFlipToFront.addEventListener("click", (e) => {
     e.stopPropagation();
     letterPaper.classList.remove("flipped");
-
-    voiceNote.pause();
-    voiceNote.currentTime = 0;
-    fadeAudio(bgMusic, 1.0, 600);
   });
 
   // ----------------------------------------------------
