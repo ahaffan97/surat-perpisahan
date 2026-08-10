@@ -608,14 +608,83 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Bulletproof Event Delegation untuk Semua Tombol Navigasi Modal 4-Langkah & Step Tabs
+  // Helper: Submit Reply Function dengan Penamaan File Otomatis Berdasarkan Kolom Nama
+  async function handleSubmitReply() {
+    const authorInput = document.getElementById("reply-author-name");
+    const textMsgInput = document.getElementById("reply-text-message");
+    
+    const author = authorInput ? authorInput.value.trim() : "";
+    const textMsg = textMsgInput ? textMsgInput.value.trim() : "";
+
+    if (!author) {
+      alert("Silakan masukkan Nama Anda terlebih dahulu.");
+      if (authorInput) authorInput.focus();
+      return;
+    }
+
+    if (!textMsg && !lastRecordedBlobUrl) {
+      alert("Silakan tulis pesan balasan atau rekam voice note terlebih dahulu.");
+      return;
+    }
+
+    const nowStr = new Date().toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    const newReply = {
+      id: Date.now(),
+      nama: author,
+      pesan: textMsg,
+      voiceUrl: lastRecordedBlobUrl,
+      time: nowStr
+    };
+
+    // Simpan ke Wall LocalStorage
+    saveReply(newReply);
+    renderVoiceNoteList();
+
+    // Kirim Balasan Teks sebagai Note File ke Google Drive (jika Webhook URL aktif)
+    if (window.GAS_WEBHOOK_URL) {
+      try {
+        if (textMsg) {
+          fetch(window.GAS_WEBHOOK_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              nama: author,
+              type: "text",
+              pesan: textMsg,
+              fileName: `Pesan_${author}_${Date.now()}.txt`
+            })
+          }).catch((err) => console.warn("Gagal mengirim teks note ke drive:", err));
+        }
+      } catch (e) {
+        console.warn("Google Apps Script error:", e);
+      }
+    }
+
+    // Reset Form
+    if (textMsgInput) textMsgInput.value = "";
+    if (vrStatus) vrStatus.textContent = "";
+    lastRecordedBlobUrl = null;
+
+    // Pindah otomatis ke Halaman 3: Hall of Memory
+    showModalPage("page-hall-of-memory");
+  }
+
+  // Bulletproof Event Delegation untuk Semua Tombol Navigasi Modal 4-Langkah & Submit Reply
   document.addEventListener("click", (e) => {
-    const btn = e.target.closest("#btn-goto-reply, #btn-skip-to-hom, #btn-goto-contacts, #btn-restart-flow, .step-tab");
+    const btn = e.target.closest("#btn-goto-reply, #btn-skip-to-hom, #btn-goto-contacts, #btn-restart-flow, #btn-submit-reply, .step-tab");
     if (!btn) return;
 
     e.stopPropagation();
     const btnId = btn.id;
-    if (btnId === "btn-goto-reply") {
+    if (btnId === "btn-submit-reply") {
+      handleSubmitReply();
+    } else if (btnId === "btn-goto-reply") {
       showModalPage("page-reply-form");
     } else if (btnId === "btn-skip-to-hom") {
       showModalPage("page-hall-of-memory");
@@ -624,61 +693,8 @@ document.addEventListener("DOMContentLoaded", () => {
       stopAllVoiceNotes();
     } else if (btnId === "btn-restart-flow") {
       showModalPage("page-video");
-    } else if (btn.classList.contains("step-tab")) {
-      const pageId = btn.dataset.target;
-      if (pageId) {
-        showModalPage(pageId);
-        if (pageId === "page-contacts") stopAllVoiceNotes();
-      }
     }
   });
-
-  // Handle Submit Reply (Name, Text, Recorded Voice Note)
-  if (btnSubmitReply) {
-    btnSubmitReply.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const author = replyAuthorName ? replyAuthorName.value.trim() : "";
-      const textMsg = replyTextMessage ? replyTextMessage.value.trim() : "";
-
-      if (!author) {
-        alert("Silakan masukkan Nama Anda terlebih dahulu.");
-        if (replyAuthorName) replyAuthorName.focus();
-        return;
-      }
-
-      if (!textMsg && !lastRecordedBlobUrl) {
-        alert("Silakan tulis pesan balasan atau rekam voice note terlebih dahulu.");
-        return;
-      }
-
-      const nowStr = new Date().toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-
-      const newReply = {
-        id: Date.now(),
-        nama: author,
-        pesan: textMsg,
-        voiceUrl: lastRecordedBlobUrl,
-        time: nowStr
-      };
-
-      saveReply(newReply);
-      renderVoiceNoteList();
-
-      // Reset form
-      if (replyTextMessage) replyTextMessage.value = "";
-      if (vrStatus) vrStatus.textContent = "";
-      lastRecordedBlobUrl = null;
-
-      // Pindah ke Langkah 3: Hall of Memory
-      showModalPage("page-hall-of-memory");
-    });
-  }
   function openVideoModal() {
     if (!videoModal) return;
     videoModal.classList.add("active");
