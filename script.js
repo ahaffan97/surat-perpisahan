@@ -203,14 +203,21 @@ document.addEventListener("DOMContentLoaded", () => {
       bgMusic.load();
     }
 
-    // Google Drive Voice Note Setup
+    // Google Drive Voice Note Setup (Balasan Pesan Suara dari Sahabat)
     const vnUrl = getGoogleDriveStreamUrl(currentData.fileVoiceNote);
-    if (vnUrl && voiceNoteCard && vnAudioPlayer) {
-      voiceNoteCard.style.display = "flex";
+    const vnSectionTitle = document.getElementById("vn-section-title");
+    const vnCardTitle = document.getElementById("vn-card-title");
+
+    if (vnSectionTitle) {
+      vnSectionTitle.textContent = `🎙️ Balasan Pesan Suara (Voice Note) dari ${currentData.namaLengkap}:`;
+    }
+    if (vnCardTitle) {
+      vnCardTitle.textContent = `Voice Note Balasan ${currentData.namaLengkap}`;
+    }
+
+    if (vnUrl && videoVnSection && vnAudioPlayer) {
       vnAudioPlayer.src = vnUrl;
       vnAudioPlayer.load();
-    } else if (voiceNoteCard) {
-      voiceNoteCard.style.display = "none";
     }
 
 
