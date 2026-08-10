@@ -169,12 +169,20 @@ document.addEventListener("DOMContentLoaded", () => {
       renderLetterContent(currentData);
     });
 
+  function formatParagraphs(text) {
+    if (!text) return "";
+    const paragraphs = text.split(/\n\s*\n/);
+    return paragraphs
+      .map(p => `<p class="letter-paragraph">${p.trim().replace(/\n/g, "<br>")}</p>`)
+      .join("");
+  }
+
   function renderLetterContent(currentData) {
     albumPhotos = currentData.fotoUtama || [];
 
     // Render Sisi Depan Surat
     letterTitle.textContent = `Untuk ${currentData.namaLengkap}`;
-    letterBody.innerHTML = `<p>${currentData.pesan}</p>`;
+    letterBody.innerHTML = formatParagraphs(currentData.pesan);
 
     // Render Galeri Foto
     photoGallery.innerHTML = "";
@@ -196,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Render Sisi Belakang Surat
-    backMessage.textContent = currentData.pesanBelakang;
+    backMessage.innerHTML = formatParagraphs(currentData.pesanBelakang);
 
     // Configure Audio Sources Direct (HTML5 Standard)
     const songPath = currentData.fileLagu || "assets/audio/sampai_jumpa.mp3";

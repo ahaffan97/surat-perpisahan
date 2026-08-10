@@ -981,9 +981,18 @@ body {
   margin-bottom: 16px;
 }
 
-.letter-body p {
-  margin-bottom: 14px;
+.letter-body p,
+.letter-paragraph,
+.back-message p {
+  margin-bottom: 1.2rem;
+  line-height: 1.8;
   text-align: justify;
+}
+
+.letter-body p:last-child,
+.letter-paragraph:last-child,
+.back-message p:last-child {
+  margin-bottom: 0;
 }
 
 .letter-footer {
