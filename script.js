@@ -171,7 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function formatParagraphs(text) {
     if (!text) return "";
-    const paragraphs = text.split(/\n\s*\n/);
+    // Dukung enter 2x dari editor maupun karakter \n\n / /n
+    const cleanedText = text.replace(/\\n/g, "\n").replace(/\/n\s*\/n/g, "\n\n");
+    const paragraphs = cleanedText.split(/\n\s*\n/);
     return paragraphs
       .map(p => `<p class="letter-paragraph">${p.trim().replace(/\n/g, "<br>")}</p>`)
       .join("");
