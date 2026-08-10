@@ -608,18 +608,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Listener untuk Tab Bar Navigasi Modal
-  document.querySelectorAll(".step-tab").forEach((tab) => {
-    tab.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const targetPage = tab.dataset.target;
-      if (targetPage) {
-        showModalPage(targetPage);
-        if (targetPage === "page-contacts") {
-          stopAllVoiceNotes();
-        }
+  // Bulletproof Event Delegation untuk Semua Tombol Navigasi Modal 4-Langkah & Step Tabs
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("#btn-goto-reply, #btn-skip-to-hom, #btn-goto-contacts, #btn-restart-flow, .step-tab");
+    if (!btn) return;
+
+    e.stopPropagation();
+    const btnId = btn.id;
+    if (btnId === "btn-goto-reply") {
+      showModalPage("page-reply-form");
+    } else if (btnId === "btn-skip-to-hom") {
+      showModalPage("page-hall-of-memory");
+    } else if (btnId === "btn-goto-contacts") {
+      showModalPage("page-contacts");
+      stopAllVoiceNotes();
+    } else if (btnId === "btn-restart-flow") {
+      showModalPage("page-video");
+    } else if (btn.classList.contains("step-tab")) {
+      const pageId = btn.dataset.target;
+      if (pageId) {
+        showModalPage(pageId);
+        if (pageId === "page-contacts") stopAllVoiceNotes();
       }
-    });
+    }
   });
 
   // Handle Submit Reply (Name, Text, Recorded Voice Note)
@@ -668,45 +679,6 @@ document.addEventListener("DOMContentLoaded", () => {
       showModalPage("page-hall-of-memory");
     });
   }
-
-  // Event Listeners Navigasi Modal 4-Langkah
-  const btnGotoReply = document.getElementById("btn-goto-reply");
-  const btnSkipToHom = document.getElementById("btn-skip-to-hom");
-  const btnGotoContacts = document.getElementById("btn-goto-contacts");
-  const btnRestartFlow = document.getElementById("btn-restart-flow");
-
-  if (btnGotoReply) {
-    btnGotoReply.addEventListener("click", (e) => {
-      e.stopPropagation();
-      showModalPage("page-reply-form");
-    });
-  }
-
-  if (btnSkipToHom) {
-    btnSkipToHom.addEventListener("click", (e) => {
-      e.stopPropagation();
-      showModalPage("page-hall-of-memory");
-    });
-  }
-
-  if (btnGotoContacts) {
-    btnGotoContacts.addEventListener("click", (e) => {
-      e.stopPropagation();
-      showModalPage("page-contacts");
-      stopAllVoiceNotes();
-    });
-  }
-
-  if (btnRestartFlow) {
-    btnRestartFlow.addEventListener("click", (e) => {
-      e.stopPropagation();
-      showModalPage("page-video");
-    });
-  }
-
-  // ----------------------------------------------------
-  // 7. FAREWELL VIDEO MODAL CONTROLLER (SUPPORT HYBRID PLAYERS)
-  // ----------------------------------------------------
   function openVideoModal() {
     if (!videoModal) return;
     videoModal.classList.add("active");
