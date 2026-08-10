@@ -102,6 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const autoplayText = document.getElementById("autoplay-text");
   const slideshowDots = document.getElementById("slideshow-dots");
 
+  // Google Apps Script Webhook URL Resmi milik Pengguna
+  window.GAS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzmDgYjis5EbKlqpYFfSNGdCqMO8LLbysD0qlxbDlCtIrIRkgpbI7-J9C5kkOOH0vpXEQ/exec";
+
   // Farewell Video Modal DOM & Players
   const videoModal = document.getElementById("video-modal");
   const videoBackdrop = document.getElementById("video-backdrop");
@@ -550,7 +553,36 @@ document.addEventListener("DOMContentLoaded", () => {
             stopTimer();
             const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
             lastRecordedBlobUrl = URL.createObjectURL(audioBlob);
-            if (vrStatus) vrStatus.innerHTML = "✅ <strong>Perekaman Selesai!</strong> Klik tombol '🚀 Kirim Balasan' untuk menyimpan.";
+
+            if (vrStatus) vrStatus.textContent = "⌛ Mengunggah Voice Note ke Google Drive...";
+
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = async () => {
+              const base64Data = reader.result.split(",")[1];
+              const authorInput = document.getElementById("reply-author-name");
+              const author = authorInput ? authorInput.value.trim() || "Sahabat" : "Sahabat";
+
+              if (window.GAS_WEBHOOK_URL) {
+                try {
+                  fetch(window.GAS_WEBHOOK_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                      nama: author,
+                      type: "voice",
+                      audioBase64: base64Data,
+                      contentType: "audio/webm"
+                    })
+                  }).then(() => {
+                    if (vrStatus) vrStatus.innerHTML = `✅ <strong>Tersimpan di Google Drive!</strong> (VoiceNote_${author})`;
+                  }).catch(err => console.warn("Error uploading voice note:", err));
+                } catch (err) {
+                  if (vrStatus) vrStatus.innerHTML = "✅ <strong>Perekaman Selesai!</strong> Klik '🚀 Simpan Balasan'.";
+                }
+              } else {
+                if (vrStatus) vrStatus.innerHTML = "✅ <strong>Perekaman Selesai!</strong> Klik '🚀 Simpan Balasan'.";
+              }
+            };
           };
 
           mediaRecorder.start();
