@@ -1660,6 +1660,124 @@ body {
   text-align: center;
 }
 
+.reply-form-card {
+  margin: 14px 0;
+  padding: 20px 24px;
+  background: radial-gradient(circle at 50% 50%, #201209 0%, #110904 100%);
+  border: 1.5px solid #d4af37;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 520px;
+  width: 100%;
+}
+
+.reply-form-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 8px;
+}
+
+.reply-form-title {
+  color: #fde68a;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+}
+
+.form-label {
+  color: #fef3c7;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.form-input,
+.form-textarea {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 10px;
+  color: #ffffff;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+.btn-submit-reply {
+  background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 28px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4);
+  transition: var(--transition-smooth);
+  outline: none;
+  margin-top: 4px;
+}
+
+.btn-submit-reply:hover {
+  background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(34, 197, 94, 0.6);
+}
+
+/* Card Pesan Teks Balasan */
+.text-reply-card {
+  width: 100%;
+  max-width: 520px;
+  background: rgba(32, 18, 9, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 14px;
+  padding: 14px 18px;
+  text-align: left;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.tr-author {
+  color: #fde68a;
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tr-body {
+  color: #f3f4f6;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.tr-time {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 6px;
+  text-align: right;
+}
+
 .btn-gdrive-upload {
   display: inline-flex;
   align-items: center;

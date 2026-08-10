@@ -455,26 +455,51 @@
         <iframe id="youtube-video-player" class="youtube-iframe-player" src="" title="YouTube Farewell Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
 
-      <!-- LANGKAH 1 SETELAH VIDEO: VOICE NOTE BALASAN SAHABAT -->
+      <!-- SECTION BALASAN SAHABAT (VOICE NOTE & TEKS PESAN DENGAN AUTO UPDATE) -->
       <div class="video-vn-section" id="video-vn-section">
-        <h3 class="video-contact-title" id="vn-section-title">🎙️ Balasan Pesan Suara (Voice Note) dari Sahabat:</h3>
+        <h3 class="video-contact-title" id="vn-section-title">💬 Wall Balasan & Pesan Suara dari Sahabat:</h3>
         
-        <!-- Container Daftar Pemutar Voice Note Balasan -->
+        <!-- Container Daftar Pemutar Voice Note & Pesan Teks Balasan -->
         <div class="voice-note-list" id="voice-note-list">
-          <!-- Di-render secara dinamis oleh JS berdasarkan link Google Drive -->
+          <!-- Di-render secara dinamis oleh JS -->
         </div>
 
-        <!-- Perekam Suara Mikrofon Langsung di Website (Auto Save ke Google Drive) -->
-        <div class="voice-recorder-card" id="voice-recorder-card">
-          <div class="vr-title">🎙️ Rekam Voice Note Baru Langsung di Web:</div>
-          <div class="vr-controls">
-            <button type="button" class="btn-vr-record" id="btn-vr-record">
-              <span id="vr-rec-icon">🔴</span>
-              <span id="vr-rec-text">Mulai Rekam Suara</span>
-            </button>
-            <span class="vr-timer" id="vr-timer" style="display:none;">00:00</span>
+        <!-- FORMULIR BALASAN SAHABAT (NAMA, REKAM SUARA & TULIS PESAN) -->
+        <div class="reply-form-card" id="reply-form-card">
+          <div class="reply-form-header">
+            <span class="reply-icon">✍️</span>
+            <span class="reply-form-title">Tulis Balasan atau Rekam Voice Note Baru:</span>
           </div>
-          <div class="vr-status" id="vr-status"></div>
+
+          <!-- Kolom Input Nama -->
+          <div class="form-group">
+            <label for="reply-author-name" class="form-label">Nama Anda:</label>
+            <input type="text" id="reply-author-name" class="form-input" placeholder="Masukkan nama Anda (misal: Bambang / Evie / Fika)..." required>
+          </div>
+
+          <!-- Pilihan Balasan: Teks / Voice Note -->
+          <div class="form-group">
+            <label for="reply-text-message" class="form-label">Tulis Pesan Balasan (Opsional):</label>
+            <textarea id="reply-text-message" class="form-textarea" rows="3" placeholder="Tuliskan pesan perpisahan / balasan hangat Anda di sini..."></textarea>
+          </div>
+
+          <!-- Perekam Suara Mikrofon Langsung di Website -->
+          <div class="voice-recorder-card" id="voice-recorder-card">
+            <div class="vr-title">🎙️ Atau Rekam Pesan Suara (Voice Note):</div>
+            <div class="vr-controls">
+              <button type="button" class="btn-vr-record" id="btn-vr-record">
+                <span id="vr-rec-icon">🔴</span>
+                <span id="vr-rec-text">Mulai Rekam Suara</span>
+              </button>
+              <span class="vr-timer" id="vr-timer" style="display:none;">00:00</span>
+            </div>
+            <div class="vr-status" id="vr-status"></div>
+          </div>
+
+          <!-- Tombol Kirim Balasan -->
+          <button type="button" class="btn-submit-reply" id="btn-submit-reply">
+            🚀 Kirim Balasan (Otomatis Update)
+          </button>
         </div>
 
         <!-- Tombol Upload / Tambah Voice Note Baru ke Google Drive -->

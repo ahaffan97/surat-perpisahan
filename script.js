@@ -203,91 +203,8 @@ document.addEventListener("DOMContentLoaded", () => {
       bgMusic.load();
     }
 
-    // Google Drive Voice Note Setup (Balasan Pesan Suara dari Sahabat)
-    const vnListContainer = document.getElementById("voice-note-list");
-    const vnSectionTitle = document.getElementById("vn-section-title");
-
-    if (vnSectionTitle) {
-      vnSectionTitle.textContent = `🎙️ Balasan Pesan Suara (Voice Note) dari Sahabat:`;
-    }
-
-    if (vnListContainer) {
-      vnListContainer.innerHTML = "";
-      let vnItems = [];
-      if (Array.isArray(currentData.fileVoiceNote)) {
-        vnItems = currentData.fileVoiceNote;
-      } else if (typeof currentData.fileVoiceNote === "string" && currentData.fileVoiceNote.trim() !== "") {
-        vnItems = [{ nama: currentData.namaLengkap, url: currentData.fileVoiceNote }];
-      }
-
-      if (vnItems.length > 0) {
-        if (videoVnSection) videoVnSection.style.display = "flex";
-        vnItems.forEach((item) => {
-          const itemNama = item.nama || currentData.namaLengkap;
-          const itemUrl = item.url || item;
-          const streamUrl = getGoogleDriveStreamUrl(itemUrl);
-
-          const card = document.createElement("div");
-          card.className = "voice-note-card";
-          card.innerHTML = `
-            <div class="vn-header">
-              <span class="vn-icon">🎙️</span>
-              <span class="vn-title">Voice Note Balasan <strong>${itemNama}</strong></span>
-            </div>
-            <button class="btn-vn-play" type="button">
-              <span class="vn-play-icon">▶️</span>
-              <span class="vn-play-text">Dengarkan Balasan ${itemNama}</span>
-            </button>
-            <audio class="vn-audio-player" src="${streamUrl}" preload="none"></audio>
-          `;
-
-          const btnPlay = card.querySelector(".btn-vn-play");
-          const audioPlayer = card.querySelector(".vn-audio-player");
-          const playIcon = card.querySelector(".vn-play-icon");
-          const playText = card.querySelector(".vn-play-text");
-
-          btnPlay.addEventListener("click", (e) => {
-            e.stopPropagation();
-            // Pause all other playing voice notes first
-            document.querySelectorAll(".vn-audio-player").forEach((a) => {
-              if (a !== audioPlayer) {
-                a.pause();
-                const parentCard = a.closest(".voice-note-card");
-                if (parentCard) {
-                  const pIcon = parentCard.querySelector(".vn-play-icon");
-                  const pText = parentCard.querySelector(".vn-play-text");
-                  if (pIcon) pIcon.textContent = "▶️";
-                  if (pText) pText.textContent = `Dengarkan Balasan ${itemNama}`;
-                }
-              }
-            });
-
-            if (audioPlayer.paused) {
-              fadeAudio(bgMusic, 0.1, 500);
-              audioPlayer.play().then(() => {
-                if (playIcon) playIcon.textContent = "⏸️";
-                if (playText) playText.textContent = "Hentikan Suara Balasan";
-              }).catch((err) => {
-                console.warn("Gagal memutar voice note Google Drive:", err);
-              });
-            } else {
-              audioPlayer.pause();
-              if (playIcon) playIcon.textContent = "▶️";
-              if (playText) playText.textContent = `Dengarkan Balasan ${itemNama}`;
-              fadeAudio(bgMusic, 1.0, 500);
-            }
-          });
-
-          audioPlayer.addEventListener("ended", () => {
-            if (playIcon) playIcon.textContent = "▶️";
-            if (playText) playText.textContent = `Dengarkan Balasan ${itemNama}`;
-            fadeAudio(bgMusic, 1.0, 500);
-          });
-
-          vnListContainer.appendChild(card);
-        });
-      }
-    }
+    // Google Drive & Local Storage Voice Note Wall Setup
+    renderVoiceNoteList();
 
 
 
@@ -461,21 +378,161 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-  // Live Browser Microphone Recorder & Auto Webhook Uploader
+  // ----------------------------------------------------
+  // DYNAMIC REPLIES WALL & VOICE RECORDER SYSTEM
+  // ----------------------------------------------------
+  const replyAuthorName = document.getElementById("reply-author-name");
+  const replyTextMessage = document.getElementById("reply-text-message");
+  const btnSubmitReply = document.getElementById("btn-submit-reply");
   const btnVrRecord = document.getElementById("btn-vr-record");
   const vrRecIcon = document.getElementById("vr-rec-icon");
   const vrRecText = document.getElementById("vr-rec-text");
   const vrTimer = document.getElementById("vr-timer");
   const vrStatus = document.getElementById("vr-status");
 
-  // Google Apps Script Webhook URL (Opsional: Diisi jika menggunakan Webhook Otomatis)
-  window.GAS_WEBHOOK_URL = "";
-
   let mediaRecorder = null;
   let audioChunks = [];
   let recordTimer = null;
   let recordSeconds = 0;
+  let lastRecordedBlobUrl = null;
 
+  // Helper: Load local stored replies from localStorage
+  function getStoredReplies() {
+    try {
+      const stored = localStorage.getItem("surat_perpisahan_replies");
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveReply(replyObj) {
+    try {
+      const current = getStoredReplies();
+      current.unshift(replyObj);
+      localStorage.setItem("surat_perpisahan_replies", JSON.stringify(current));
+    } catch (e) {
+      console.warn("Gagal menyimpan balasan ke localStorage:", e);
+    }
+  }
+
+  // Render Voice Note & Text Reply List
+  function renderVoiceNoteList() {
+    const vnListContainer = document.getElementById("voice-note-list");
+    if (!vnListContainer) return;
+    vnListContainer.innerHTML = "";
+
+    let items = [];
+
+    // 1. Initial items from config.json
+    if (currentData) {
+      if (Array.isArray(currentData.fileVoiceNote)) {
+        currentData.fileVoiceNote.forEach(item => {
+          items.push({
+            nama: item.nama || currentData.namaLengkap,
+            url: item.url || item,
+            type: "voice"
+          });
+        });
+      } else if (typeof currentData.fileVoiceNote === "string" && currentData.fileVoiceNote.trim() !== "") {
+        items.push({
+          nama: currentData.namaLengkap,
+          url: currentData.fileVoiceNote,
+          type: "voice"
+        });
+      }
+    }
+
+    // 2. User submitted replies from localStorage
+    const userReplies = getStoredReplies();
+    userReplies.forEach(ur => {
+      items.unshift(ur);
+    });
+
+    if (items.length > 0) {
+      if (videoVnSection) videoVnSection.style.display = "flex";
+      items.forEach((item) => {
+        if (item.type === "text" || item.pesan) {
+          // Render Text Reply Card
+          const card = document.createElement("div");
+          card.className = "text-reply-card";
+          card.innerHTML = `
+            <div class="tr-author">💬 Balasan dari <strong>${item.nama}</strong></div>
+            <div class="tr-body">"${item.pesan}"</div>
+            <div class="tr-time">📅 ${item.time || "Baru saja"}</div>
+          `;
+          vnListContainer.appendChild(card);
+        }
+        
+        if (item.url || item.voiceUrl) {
+          // Render Voice Note Card
+          const itemNama = item.nama || "Sahabat";
+          const rawUrl = item.url || item.voiceUrl;
+          const streamUrl = getGoogleDriveStreamUrl(rawUrl) || rawUrl;
+
+          const card = document.createElement("div");
+          card.className = "voice-note-card";
+          card.innerHTML = `
+            <div class="vn-header">
+              <span class="vn-icon">🎙️</span>
+              <span class="vn-title">Voice Note Balasan <strong>${itemNama}</strong></span>
+            </div>
+            <button class="btn-vn-play" type="button">
+              <span class="vn-play-icon">▶️</span>
+              <span class="vn-play-text">Dengarkan Balasan ${itemNama}</span>
+            </button>
+            <audio class="vn-audio-player" src="${streamUrl}" preload="none"></audio>
+          `;
+
+          const btnPlay = card.querySelector(".btn-vn-play");
+          const audioPlayer = card.querySelector(".vn-audio-player");
+          const playIcon = card.querySelector(".vn-play-icon");
+          const playText = card.querySelector(".vn-play-text");
+
+          btnPlay.addEventListener("click", (e) => {
+            e.stopPropagation();
+            document.querySelectorAll(".vn-audio-player").forEach((a) => {
+              if (a !== audioPlayer) {
+                a.pause();
+                const parentCard = a.closest(".voice-note-card");
+                if (parentCard) {
+                  const pIcon = parentCard.querySelector(".vn-play-icon");
+                  const pText = parentCard.querySelector(".vn-play-text");
+                  if (pIcon) pIcon.textContent = "▶️";
+                  if (pText) pText.textContent = `Dengarkan Balasan`;
+                }
+              }
+            });
+
+            if (audioPlayer.paused) {
+              fadeAudio(bgMusic, 0.1, 500);
+              audioPlayer.play().then(() => {
+                if (playIcon) playIcon.textContent = "⏸️";
+                if (playText) playText.textContent = "Hentikan Suara Balasan";
+              }).catch((err) => {
+                console.warn("Gagal memutar voice note:", err);
+              });
+            } else {
+              audioPlayer.pause();
+              if (playIcon) playIcon.textContent = "▶️";
+              if (playText) playText.textContent = `Dengarkan Balasan ${itemNama}`;
+              fadeAudio(bgMusic, 1.0, 500);
+            }
+          });
+
+          audioPlayer.addEventListener("ended", () => {
+            if (playIcon) playIcon.textContent = "▶️";
+            if (playText) playText.textContent = `Dengarkan Balasan ${itemNama}`;
+            fadeAudio(bgMusic, 1.0, 500);
+          });
+
+          vnListContainer.appendChild(card);
+        }
+      });
+    }
+  }
+
+  // Live Browser Microphone Recorder
   if (btnVrRecord) {
     btnVrRecord.addEventListener("click", async (e) => {
       e.stopPropagation();
@@ -489,38 +546,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (ev.data.size > 0) audioChunks.push(ev.data);
           };
 
-          mediaRecorder.onstop = async () => {
+          mediaRecorder.onstop = () => {
             stopTimer();
             const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-            if (vrStatus) vrStatus.textContent = "⌛ Mengunggah hasil rekaman ke Google Drive...";
-
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
-            reader.onloadend = async () => {
-              const base64Data = reader.result.split(",")[1];
-              if (window.GAS_WEBHOOK_URL) {
-                try {
-                  const res = await fetch(window.GAS_WEBHOOK_URL, {
-                    method: "POST",
-                    body: JSON.stringify({
-                      nama: recipientKey,
-                      audioBase64: base64Data,
-                      contentType: "audio/webm"
-                    })
-                  });
-                  const json = await res.json();
-                  if (json.status === "success" && vrStatus) {
-                    vrStatus.innerHTML = `✅ <strong>Berhasil!</strong> Voice Note tersimpan otomatis di Google Drive.`;
-                  }
-                } catch (err) {
-                  if (vrStatus) vrStatus.textContent = "✅ Rekaman selesai! Membuka folder Google Drive...";
-                  window.open("https://drive.google.com/drive/folders/1YQNJMy2sVcFS-Q9nlA33nJjofik-kcKR?usp=sharing", "_blank");
-                }
-              } else {
-                if (vrStatus) vrStatus.textContent = "✅ Rekaman selesai! Membuka folder Google Drive...";
-                window.open("https://drive.google.com/drive/folders/1YQNJMy2sVcFS-Q9nlA33nJjofik-kcKR?usp=sharing", "_blank");
-              }
-            };
+            lastRecordedBlobUrl = URL.createObjectURL(audioBlob);
+            if (vrStatus) vrStatus.innerHTML = "✅ <strong>Perekaman Selesai!</strong> Klik tombol '🚀 Kirim Balasan' untuk menyimpan.";
           };
 
           mediaRecorder.start();
@@ -556,6 +586,52 @@ document.addEventListener("DOMContentLoaded", () => {
   function stopTimer() {
     if (recordTimer) clearInterval(recordTimer);
     if (vrTimer) vrTimer.style.display = "none";
+  }
+
+  // Handle Submit Reply (Name, Text, Recorded Voice Note)
+  if (btnSubmitReply) {
+    btnSubmitReply.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const author = replyAuthorName ? replyAuthorName.value.trim() : "";
+      const textMsg = replyTextMessage ? replyTextMessage.value.trim() : "";
+
+      if (!author) {
+        alert("Silakan masukkan Nama Anda terlebih dahulu.");
+        if (replyAuthorName) replyAuthorName.focus();
+        return;
+      }
+
+      if (!textMsg && !lastRecordedBlobUrl) {
+        alert("Silakan tulis pesan balasan atau rekam voice note terlebih dahulu.");
+        return;
+      }
+
+      const nowStr = new Date().toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      const newReply = {
+        id: Date.now(),
+        nama: author,
+        pesan: textMsg,
+        voiceUrl: lastRecordedBlobUrl,
+        time: nowStr
+      };
+
+      saveReply(newReply);
+      renderVoiceNoteList();
+
+      // Reset form
+      if (replyTextMessage) replyTextMessage.value = "";
+      if (vrStatus) vrStatus.textContent = "";
+      lastRecordedBlobUrl = null;
+
+      alert(`Terima kasih ${author}! Balasan Anda berhasil tersimpan dan tampil otomatis.`);
+    });
   }
 
   // ----------------------------------------------------
