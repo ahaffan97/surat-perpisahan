@@ -455,20 +455,15 @@
         <iframe id="youtube-video-player" class="youtube-iframe-player" src="" title="YouTube Farewell Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
 
-      <!-- LANGKAH 1 SETELAH VIDEO: VOICE NOTE BALASAN SAHABAT -->
+      <!-- LANGKAH 1 SETELAH VIDEO: VOICE NOTE BALASAN SAHABAT (DAPAT TERDIRI DARI BANYAK SAHABAT) -->
       <div class="video-vn-section" id="video-vn-section">
         <h3 class="video-contact-title" id="vn-section-title">🎙️ Balasan Pesan Suara (Voice Note) dari Sahabat:</h3>
-        <div class="voice-note-card" id="voice-note-card">
-          <div class="vn-header">
-            <span class="vn-icon">🎙️</span>
-            <span class="vn-title" id="vn-card-title">Voice Note Balasan Sahabat</span>
-          </div>
-          <button class="btn-vn-play" id="btn-vn-play" type="button">
-            <span id="vn-play-icon">▶️</span>
-            <span id="vn-play-text">Dengarkan Pesan Suara Balasan</span>
-          </button>
-          <audio id="vn-audio-player" preload="none"></audio>
+        
+        <!-- Container Daftar Pemutar Voice Note Balasan -->
+        <div class="voice-note-list" id="voice-note-list">
+          <!-- Di-render secara dinamis oleh JS berdasarkan link Google Drive -->
         </div>
+
         <button class="btn-next-step" id="btn-next-to-contacts" type="button">
           Lanjut Balas via WhatsApp & LinkedIn ➔
         </button>

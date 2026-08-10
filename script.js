@@ -204,20 +204,89 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Google Drive Voice Note Setup (Balasan Pesan Suara dari Sahabat)
-    const vnUrl = getGoogleDriveStreamUrl(currentData.fileVoiceNote);
+    const vnListContainer = document.getElementById("voice-note-list");
     const vnSectionTitle = document.getElementById("vn-section-title");
-    const vnCardTitle = document.getElementById("vn-card-title");
 
     if (vnSectionTitle) {
-      vnSectionTitle.textContent = `🎙️ Balasan Pesan Suara (Voice Note) dari ${currentData.namaLengkap}:`;
-    }
-    if (vnCardTitle) {
-      vnCardTitle.textContent = `Voice Note Balasan ${currentData.namaLengkap}`;
+      vnSectionTitle.textContent = `🎙️ Balasan Pesan Suara (Voice Note) dari Sahabat:`;
     }
 
-    if (vnUrl && videoVnSection && vnAudioPlayer) {
-      vnAudioPlayer.src = vnUrl;
-      vnAudioPlayer.load();
+    if (vnListContainer) {
+      vnListContainer.innerHTML = "";
+      let vnItems = [];
+      if (Array.isArray(currentData.fileVoiceNote)) {
+        vnItems = currentData.fileVoiceNote;
+      } else if (typeof currentData.fileVoiceNote === "string" && currentData.fileVoiceNote.trim() !== "") {
+        vnItems = [{ nama: currentData.namaLengkap, url: currentData.fileVoiceNote }];
+      }
+
+      if (vnItems.length > 0) {
+        if (videoVnSection) videoVnSection.style.display = "flex";
+        vnItems.forEach((item) => {
+          const itemNama = item.nama || currentData.namaLengkap;
+          const itemUrl = item.url || item;
+          const streamUrl = getGoogleDriveStreamUrl(itemUrl);
+
+          const card = document.createElement("div");
+          card.className = "voice-note-card";
+          card.innerHTML = `
+            <div class="vn-header">
+              <span class="vn-icon">🎙️</span>
+              <span class="vn-title">Voice Note Balasan <strong>${itemNama}</strong></span>
+            </div>
+            <button class="btn-vn-play" type="button">
+              <span class="vn-play-icon">▶️</span>
+              <span class="vn-play-text">Dengarkan Balasan ${itemNama}</span>
+            </button>
+            <audio class="vn-audio-player" src="${streamUrl}" preload="none"></audio>
+          `;
+
+          const btnPlay = card.querySelector(".btn-vn-play");
+          const audioPlayer = card.querySelector(".vn-audio-player");
+          const playIcon = card.querySelector(".vn-play-icon");
+          const playText = card.querySelector(".vn-play-text");
+
+          btnPlay.addEventListener("click", (e) => {
+            e.stopPropagation();
+            // Pause all other playing voice notes first
+            document.querySelectorAll(".vn-audio-player").forEach((a) => {
+              if (a !== audioPlayer) {
+                a.pause();
+                const parentCard = a.closest(".voice-note-card");
+                if (parentCard) {
+                  const pIcon = parentCard.querySelector(".vn-play-icon");
+                  const pText = parentCard.querySelector(".vn-play-text");
+                  if (pIcon) pIcon.textContent = "▶️";
+                  if (pText) pText.textContent = `Dengarkan Balasan ${itemNama}`;
+                }
+              }
+            });
+
+            if (audioPlayer.paused) {
+              fadeAudio(bgMusic, 0.1, 500);
+              audioPlayer.play().then(() => {
+                if (playIcon) playIcon.textContent = "⏸️";
+                if (playText) playText.textContent = "Hentikan Suara Balasan";
+              }).catch((err) => {
+                console.warn("Gagal memutar voice note Google Drive:", err);
+              });
+            } else {
+              audioPlayer.pause();
+              if (playIcon) playIcon.textContent = "▶️";
+              if (playText) playText.textContent = `Dengarkan Balasan ${itemNama}`;
+              fadeAudio(bgMusic, 1.0, 500);
+            }
+          });
+
+          audioPlayer.addEventListener("ended", () => {
+            if (playIcon) playIcon.textContent = "▶️";
+            if (playText) playText.textContent = `Dengarkan Balasan ${itemNama}`;
+            fadeAudio(bgMusic, 1.0, 500);
+          });
+
+          vnListContainer.appendChild(card);
+        });
+      }
     }
 
 
@@ -378,30 +447,18 @@ document.addEventListener("DOMContentLoaded", () => {
     letterPaper.classList.remove("flipped");
   });
 
-  // Google Drive Voice Note Play/Pause Handler
-  if (btnVnPlay && vnAudioPlayer) {
-    btnVnPlay.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (vnAudioPlayer.paused) {
-        fadeAudio(bgMusic, 0.1, 500);
-        vnAudioPlayer.play().then(() => {
-          if (vnPlayIcon) vnPlayIcon.textContent = "⏸️";
-          if (vnPlayText) vnPlayText.textContent = "Hentikan Voice Note";
-        }).catch((err) => {
-          console.warn("Gagal memutar voice note Google Drive:", err);
-        });
-      } else {
-        vnAudioPlayer.pause();
-        if (vnPlayIcon) vnPlayIcon.textContent = "▶️";
-        if (vnPlayText) vnPlayText.textContent = "Putar Voice Note";
-        fadeAudio(bgMusic, 1.0, 500);
+  // Stop all voice notes when closing modal
+  function stopAllVoiceNotes() {
+    document.querySelectorAll(".vn-audio-player").forEach((a) => {
+      a.pause();
+      a.currentTime = 0;
+      const parentCard = a.closest(".voice-note-card");
+      if (parentCard) {
+        const pIcon = parentCard.querySelector(".vn-play-icon");
+        const pText = parentCard.querySelector(".vn-play-text");
+        if (pIcon) pIcon.textContent = "▶️";
+        if (pText) pText.textContent = "Dengarkan Balasan";
       }
-    });
-
-    vnAudioPlayer.addEventListener("ended", () => {
-      if (vnPlayIcon) vnPlayIcon.textContent = "▶️";
-      if (vnPlayText) vnPlayText.textContent = "Putar Voice Note";
-      fadeAudio(bgMusic, 1.0, 500);
     });
   }
 
@@ -444,6 +501,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!videoModal) return;
     videoModal.classList.remove("active");
     videoModal.setAttribute("aria-hidden", "true");
+    stopAllVoiceNotes();
     if (videoPlayer) {
       videoPlayer.pause();
     }
@@ -462,11 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.stopPropagation();
       if (videoVnSection) videoVnSection.style.display = "none";
       if (videoContactSection) videoContactSection.style.display = "flex";
-      if (vnAudioPlayer) {
-        vnAudioPlayer.pause();
-        if (vnPlayIcon) vnPlayIcon.textContent = "▶️";
-        if (vnPlayText) vnPlayText.textContent = "Putar Voice Note";
-      }
+      stopAllVoiceNotes();
     });
   }
 
