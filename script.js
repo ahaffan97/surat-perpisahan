@@ -678,85 +678,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (vrTimer) vrTimer.style.display = "none";
   }
 
-  // Helper: Navigasi Modal Sinematik 3-Halaman (Video ➔ Hall of Memory Chat Room ➔ Kontak)
+  // Helper: Navigasi Modal Sinematik 2-Halaman (Video Farewell ➔ Kontak WhatsApp & LinkedIn)
   function showModalPage(pageId) {
-    const pages = ["page-video", "page-hall-of-memory", "page-contacts"];
+    const pages = ["page-video", "page-contacts"];
     pages.forEach((p) => {
       const el = document.getElementById(p);
       if (el) {
         el.style.display = (p === pageId) ? "flex" : "none";
       }
     });
-
-    if (pageId === "page-hall-of-memory") {
-      renderVoiceNoteList();
-    }
   }
 
-  // Helper Global: Send Chat Reply Directly inside Chat Room Wall
-  window.handleSendChatReply = function handleSendChatReply() {
-    const senderInput = document.getElementById("chat-sender-name");
-    const msgInput = document.getElementById("chat-text-input");
-
-    const senderName = senderInput && senderInput.value.trim() !== "" ? senderInput.value.trim() : "Sahabat";
-    let messageText = msgInput ? msgInput.value.trim() : "";
-
-    if (!messageText && !lastRecordedBlobUrl) {
-      messageText = "Salam hangat dan sukses selalu!";
-    }
-
-    const nowStr = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-
-    const newChat = {
-      id: Date.now(),
-      nama: senderName,
-      pesan: messageText,
-      voiceUrl: lastRecordedBlobUrl,
-      time: nowStr
-    };
-
-    // 1. Simpan Balasan Baru ke LocalStorage Wall
-    saveReply(newChat);
-
-    // 2. Render Ulang Chat Bubbles Wall
-    renderVoiceNoteList();
-
-    // 3. Kirim ke Google Drive di Latar Belakang (Non-blocking / Tanpa Redirect)
-    if (window.GAS_WEBHOOK_URL && messageText) {
-      try {
-        fetch(window.GAS_WEBHOOK_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify({
-            nama: senderName,
-            type: "text",
-            pesan: messageText,
-            fileName: `Pesan_${senderName}_${Date.now()}.txt`
-          })
-        }).catch(err => console.warn("Background Drive save error:", err));
-      } catch (e) {
-        console.warn("GAS fetch error:", e);
-      }
-    }
-
-    // 4. Reset Input Bar Chat
-    if (msgInput) msgInput.value = "";
-    const recStatus = document.getElementById("chat-rec-status");
-    if (recStatus) recStatus.textContent = "";
-    lastRecordedBlobUrl = null;
-  };
-
-  // Bulletproof Event Delegation untuk Semua Tombol Navigasi Modal (Video ➔ Chat Room ➔ Kontak)
+  // Bulletproof Event Delegation untuk Navigasi Modal (Video ➔ WhatsApp / LinkedIn)
   document.addEventListener("click", (e) => {
-    const btn = e.target.closest("#btn-goto-reply, #btn-skip-to-hom, #btn-goto-contacts, #btn-restart-flow, #btn-chat-send");
+    const btn = e.target.closest("#btn-goto-contacts, #btn-restart-flow, #btn-goto-reply");
     if (!btn) return;
 
     e.stopPropagation();
     const btnId = btn.id;
-    if (btnId === "btn-goto-reply" || btnId === "btn-skip-to-hom") {
-      showModalPage("page-hall-of-memory");
-    } else if (btnId === "btn-goto-contacts") {
+    if (btnId === "btn-goto-contacts" || btnId === "btn-goto-reply") {
       showModalPage("page-contacts");
       stopAllVoiceNotes();
     } else if (btnId === "btn-restart-flow") {
