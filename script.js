@@ -429,14 +429,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load user submitted replies from localStorage
     let userReplies = getStoredReplies();
 
-    // Default chat messages if no user replies stored yet
+    // Default chat messages
     let defaultChatList = [
       { nama: "Bambang", pesan: "Sukses selalu Mas Affan! Terima kasih untuk bimbingan dan kebersamaannya di PT. GIJ.", time: "10:15" },
       { nama: "Evie", pesan: "Sampai jumpa lagi Mas Affan, jangan lupa sama kami ya!", time: "11:30" },
       { nama: "Fika", pesan: "Semoga sukses di tempat baru Mas Affan, sehat & bahagia selalu!", time: "12:45" }
     ];
 
-    let list = userReplies && userReplies.length > 0 ? userReplies : defaultChatList;
+    // Combine default list + user replies (user replies appear at bottom)
+    let list = [...defaultChatList, ...userReplies];
 
     list.forEach((item) => {
       const itemNama = item.nama || "Sahabat";
@@ -701,7 +702,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let messageText = msgInput ? msgInput.value.trim() : "";
 
     if (!messageText && !lastRecordedBlobUrl) {
-      messageText = "Terima kasih untuk segalanya, salam hangat!";
+      messageText = "Salam hangat dan sukses selalu!";
     }
 
     const nowStr = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });

@@ -476,9 +476,9 @@
           </div>
 
           <!-- FORM INPUT CHAT LANGSUNG (KIRIM CHAT BARU) -->
-          <form class="chat-input-bar" id="chat-input-form" onsubmit="event.preventDefault(); window.handleSendChatReply();">
-            <input type="text" id="chat-sender-name" class="chat-input-name" placeholder="Nama Anda..." required>
-            <input type="text" id="chat-text-input" class="chat-input-msg" placeholder="Ketik balasan pesan perpisahan Anda di sini...">
+          <div class="chat-input-bar" id="chat-input-form">
+            <input type="text" id="chat-sender-name" class="chat-input-name" placeholder="Nama Anda...">
+            <input type="text" id="chat-text-input" class="chat-input-msg" placeholder="Ketik balasan pesan perpisahan di sini..." onkeypress="if(event.key==='Enter'){event.preventDefault(); window.handleSendChatReply();}">
             
             <!-- Tombol Rekam Voice Note -->
             <button type="button" class="btn-chat-mic" id="btn-chat-mic" title="Rekam Suara">
@@ -486,10 +486,10 @@
             </button>
 
             <!-- Tombol Kirim Chat -->
-            <button type="submit" class="btn-chat-send" id="btn-chat-send">
+            <button type="button" class="btn-chat-send" id="btn-chat-send" onclick="window.handleSendChatReply()">
               🚀 Kirim
             </button>
-          </form>
+          </div>
 
           <!-- Status Perekaman Suara Chat -->
           <div class="chat-rec-status" id="chat-rec-status"></div>
