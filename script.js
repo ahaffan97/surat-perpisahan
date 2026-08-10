@@ -567,6 +567,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 try {
                   fetch(window.GAS_WEBHOOK_URL, {
                     method: "POST",
+                    mode: "no-cors",
+                    headers: {
+                      "Content-Type": "text/plain"
+                    },
                     body: JSON.stringify({
                       nama: author,
                       type: "voice",
@@ -685,12 +689,18 @@ document.addEventListener("DOMContentLoaded", () => {
         if (textMsg) {
           fetch(window.GAS_WEBHOOK_URL, {
             method: "POST",
+            mode: "no-cors",
+            headers: {
+              "Content-Type": "text/plain"
+            },
             body: JSON.stringify({
               nama: author,
               type: "text",
               pesan: textMsg,
               fileName: `Pesan_${author}_${Date.now()}.txt`
             })
+          }).then(() => {
+            console.log("Pesan teks terkirim ke Google Drive.");
           }).catch((err) => console.warn("Gagal mengirim teks note ke drive:", err));
         }
       } catch (e) {
