@@ -433,57 +433,56 @@
     </div>
   </div>
 
-  <!-- FAREWELL VIDEO CINEMA MODAL (DUAL HYBRID PLAYER: LOCAL MP4 & YOUTUBE AUTOPLAY EMBED) -->
+  <!-- FAREWELL VIDEO CINEMA MODAL (ALUR 4-LANGKAH SEQUENTIAL) -->
   <div class="video-modal" id="video-modal" aria-hidden="true">
     <div class="video-backdrop" id="video-backdrop"></div>
     <div class="video-content">
       <button class="video-close" id="video-close" title="Tutup Video" aria-label="Tutup Video Kenangan">✕ Tutup Video</button>
 
-      <div class="video-header">
-        <span class="video-badge">🎬 VIDEO KENANGAN FAREWELL</span>
-        <h2 class="video-title" id="video-title">Kenangan Indah Bersama PT. GIJ</h2>
-      </div>
-
-      <div class="video-stage">
-        <!-- 1. LOCAL HTML5 MP4 PLAYER -->
-        <video id="farewell-video-player" controls preload="metadata" poster="assets/images/wide_team_memory.png">
-          <source id="video-source" src="" type="video/mp4">
-          Browser Anda tidak mendukung pemutaran video HTML5.
-        </video>
-
-        <!-- 2. YOUTUBE EMBED AUTOPLAY IFRAME PLAYER -->
-        <iframe id="youtube-video-player" class="youtube-iframe-player" src="" title="YouTube Farewell Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-      </div>
-
-      <!-- SECTION BALASAN SAHABAT (VOICE NOTE & TEKS PESAN DENGAN AUTO UPDATE) -->
-      <div class="video-vn-section" id="video-vn-section">
-        <h3 class="video-contact-title" id="vn-section-title">💬 Wall Balasan & Pesan Suara dari Sahabat:</h3>
-        
-        <!-- Container Daftar Pemutar Voice Note & Pesan Teks Balasan -->
-        <div class="voice-note-list" id="voice-note-list">
-          <!-- Di-render secara dinamis oleh JS -->
+      <!-- LANGKAH 1: VIDEO FAREWELL CINEMA (DIPUTAR TERLEBIH DAHULU) -->
+      <div class="modal-page active-page" id="page-video">
+        <div class="video-header">
+          <span class="video-badge">🎬 VIDEO KENANGAN FAREWELL</span>
+          <h2 class="video-title" id="video-title">Kenangan Indah Bersama PT. GIJ</h2>
         </div>
 
-        <!-- FORMULIR BALASAN SAHABAT (NAMA, REKAM SUARA & TULIS PESAN) -->
-        <div class="reply-form-card" id="reply-form-card">
-          <div class="reply-form-header">
-            <span class="reply-icon">✍️</span>
-            <span class="reply-form-title">Tulis Balasan atau Rekam Voice Note Baru:</span>
-          </div>
+        <div class="video-stage">
+          <!-- 1. LOCAL HTML5 MP4 PLAYER -->
+          <video id="farewell-video-player" controls preload="metadata" poster="assets/images/wide_team_memory.png">
+            <source id="video-source" src="" type="video/mp4">
+            Browser Anda tidak mendukung pemutaran video HTML5.
+          </video>
 
+          <!-- 2. YOUTUBE EMBED AUTOPLAY IFRAME PLAYER -->
+          <iframe id="youtube-video-player" class="youtube-iframe-player" src="" title="YouTube Farewell Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+
+        <button class="btn-next-step" id="btn-goto-reply" type="button">
+          ✍️ Beri Balasan Sahabat ➔
+        </button>
+      </div>
+
+      <!-- LANGKAH 2: FORMULIR BALASAN SAHABAT (NAMA, TEKS & REKAM VOICE NOTE) -->
+      <div class="modal-page" id="page-reply-form" style="display: none;">
+        <div class="video-header">
+          <span class="video-badge">✍️ FORMULIR BALASAN SAHABAT</span>
+          <h2 class="video-title">Tulis Pesan atau Rekam Voice Note</h2>
+        </div>
+
+        <div class="reply-form-card" id="reply-form-card">
           <!-- Kolom Input Nama -->
           <div class="form-group">
             <label for="reply-author-name" class="form-label">Nama Anda:</label>
             <input type="text" id="reply-author-name" class="form-input" placeholder="Masukkan nama Anda (misal: Bambang / Evie / Fika)..." required>
           </div>
 
-          <!-- Pilihan Balasan: Teks / Voice Note -->
+          <!-- Pilihan Balasan: Teks -->
           <div class="form-group">
             <label for="reply-text-message" class="form-label">Tulis Pesan Balasan (Opsional):</label>
             <textarea id="reply-text-message" class="form-textarea" rows="3" placeholder="Tuliskan pesan perpisahan / balasan hangat Anda di sini..."></textarea>
           </div>
 
-          <!-- Perekam Suara Mikrofon Langsung di Website -->
+          <!-- Pilihan Balasan: Voice Note Mikrofon -->
           <div class="voice-recorder-card" id="voice-recorder-card">
             <div class="vr-title">🎙️ Atau Rekam Pesan Suara (Voice Note):</div>
             <div class="vr-controls">
@@ -496,25 +495,43 @@
             <div class="vr-status" id="vr-status"></div>
           </div>
 
-          <!-- Tombol Kirim Balasan -->
+          <!-- Tombol Simpan & Navigasi -->
           <button type="button" class="btn-submit-reply" id="btn-submit-reply">
-            🚀 Kirim Balasan (Otomatis Update)
+            🚀 Simpan Balasan & Masuk ke Hall of Memory ➔
+          </button>
+          <button type="button" class="btn-secondary-step" id="btn-skip-to-hom">
+            Atau Langsung lihat Hall of Memory ➔
           </button>
         </div>
+      </div>
 
-        <!-- Tombol Upload / Tambah Voice Note Baru ke Google Drive -->
+      <!-- LANGKAH 3: HALL OF MEMORY (WALL PESAN BALASAN TEKS & VOICE NOTE) -->
+      <div class="modal-page" id="page-hall-of-memory" style="display: none;">
+        <div class="video-header">
+          <span class="video-badge">🏛️ HALL OF MEMORY</span>
+          <h2 class="video-title">Kumpulan Balasan & Voice Note Sahabat</h2>
+        </div>
+
+        <div class="voice-note-list" id="voice-note-list">
+          <!-- Di-render secara dinamis oleh JS -->
+        </div>
+
         <a id="btn-upload-gdrive-vn" href="https://drive.google.com/drive/folders/1YQNJMy2sVcFS-Q9nlA33nJjofik-kcKR?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-gdrive-upload">
           <span>📂 Buka Folder Google Drive Publik</span>
         </a>
 
-        <button class="btn-next-step" id="btn-next-to-contacts" type="button">
-          Lanjut Balas via WhatsApp & LinkedIn ➔
+        <button class="btn-next-step" id="btn-goto-contacts" type="button">
+          💬 Tetap Terhubung via WhatsApp & LinkedIn ➔
         </button>
       </div>
 
-      <!-- LANGKAH 2: BALASAN LINKEDIN & WHATSAPP SETELAH VOICE NOTE -->
-      <div class="video-contact-section" id="video-contact-section" style="display: none;">
-        <h3 class="video-contact-title">💬 Kirim Balasan & Tetap Terhubung Bersama Achmad Hairil Affan:</h3>
+      <!-- LANGKAH 4: KONTAK TERHUBUNG (WHATSAPP & LINKEDIN) -->
+      <div class="modal-page" id="page-contacts" style="display: none;">
+        <div class="video-header">
+          <span class="video-badge">🤝 KONTAK SOSIAL</span>
+          <h2 class="video-title">Tetap Terhubung Bersama Achmad Hairil Affan</h2>
+        </div>
+
         <div class="social-buttons-container horizontal">
           <a id="video-wa-button" href="#" target="_blank" rel="noopener noreferrer" class="btn-social btn-wa">
             <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -530,6 +547,10 @@
             <span>Terhubung via LinkedIn</span>
           </a>
         </div>
+
+        <button class="btn-secondary-step" id="btn-restart-flow" type="button" style="margin-top: 20px;">
+          🔄 Ulangi dari Video Farewell
+        </button>
       </div>
 
     </div>

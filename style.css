@@ -1552,6 +1552,45 @@ body {
 }
 
 
+.modal-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  animation: fadeInModalPage 0.4s ease forwards;
+}
+
+@keyframes fadeInModalPage {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.btn-secondary-step {
+  background: transparent;
+  color: #fde68a;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  outline: none;
+  margin-top: 10px;
+}
+
+.btn-secondary-step:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: #d4af37;
+  color: #ffffff;
+}
+
 .video-vn-section {
   margin-top: 16px;
   width: 100%;

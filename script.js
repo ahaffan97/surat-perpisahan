@@ -588,6 +588,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (vrTimer) vrTimer.style.display = "none";
   }
 
+  // Helper: Navigasi Modal Sinematik 4-Halaman
+  function showModalPage(pageId) {
+    const pages = ["page-video", "page-reply-form", "page-hall-of-memory", "page-contacts"];
+    pages.forEach((p) => {
+      const el = document.getElementById(p);
+      if (el) {
+        el.style.display = (p === pageId) ? "flex" : "none";
+      }
+    });
+  }
+
   // Handle Submit Reply (Name, Text, Recorded Voice Note)
   if (btnSubmitReply) {
     btnSubmitReply.addEventListener("click", (e) => {
@@ -630,7 +641,43 @@ document.addEventListener("DOMContentLoaded", () => {
       if (vrStatus) vrStatus.textContent = "";
       lastRecordedBlobUrl = null;
 
-      alert(`Terima kasih ${author}! Balasan Anda berhasil tersimpan dan tampil otomatis.`);
+      // Pindah ke Langkah 3: Hall of Memory
+      showModalPage("page-hall-of-memory");
+    });
+  }
+
+  // Event Listeners Navigasi Modal 4-Langkah
+  const btnGotoReply = document.getElementById("btn-goto-reply");
+  const btnSkipToHom = document.getElementById("btn-skip-to-hom");
+  const btnGotoContacts = document.getElementById("btn-goto-contacts");
+  const btnRestartFlow = document.getElementById("btn-restart-flow");
+
+  if (btnGotoReply) {
+    btnGotoReply.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showModalPage("page-reply-form");
+    });
+  }
+
+  if (btnSkipToHom) {
+    btnSkipToHom.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showModalPage("page-hall-of-memory");
+    });
+  }
+
+  if (btnGotoContacts) {
+    btnGotoContacts.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showModalPage("page-contacts");
+      stopAllVoiceNotes();
+    });
+  }
+
+  if (btnRestartFlow) {
+    btnRestartFlow.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showModalPage("page-video");
     });
   }
 
@@ -642,8 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
     videoModal.classList.add("active");
     videoModal.setAttribute("aria-hidden", "false");
 
-    if (videoVnSection) videoVnSection.style.display = "flex";
-    if (videoContactSection) videoContactSection.style.display = "none";
+    showModalPage("page-video");
 
     if (videoStage && videoStage.classList.contains("is-youtube")) {
       if (youtubePlayer && youtubePlayer.src) {
