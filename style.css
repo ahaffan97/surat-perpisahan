@@ -1553,6 +1553,57 @@ body {
 
 
 /* ==========================================
+   VOICE NOTE GOOGLE DRIVE CARD STYLING
+   ========================================== */
+.voice-note-card {
+  margin: 14px 0;
+  padding: 14px 22px;
+  background: linear-gradient(135deg, #fdf8ef 0%, #f4e8d3 100%);
+  border: 1.5px solid #d4af37;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 440px;
+  width: 100%;
+}
+
+.vn-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #5c3d1e;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.btn-vn-play {
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 25px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.35);
+  outline: none;
+}
+
+.btn-vn-play:hover {
+  background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(45, 106, 79, 0.5);
+}
+
+
+/* ==========================================
    AUTOMATIC ORIENTATION & RESPONSIVE ADAPTATION
    ========================================== */
 

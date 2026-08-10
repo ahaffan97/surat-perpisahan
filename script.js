@@ -115,6 +115,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let albumPhotos = [];
 
+  // Voice Note Google Drive DOM Elements
+  const voiceNoteCard = document.getElementById("voice-note-card");
+  const btnVnPlay = document.getElementById("btn-vn-play");
+  const vnPlayIcon = document.getElementById("vn-play-icon");
+  const vnPlayText = document.getElementById("vn-play-text");
+  const vnAudioPlayer = document.getElementById("vn-audio-player");
+
+  // Helper: Convert Google Drive share link into direct audio streaming URL
+  function getGoogleDriveStreamUrl(url) {
+    if (!url) return null;
+    if (url.includes("drive.google.com")) {
+      const match = url.match(/\/file\/d\/([^\/\?]+)/) || url.match(/id=([^\/\&]+)/);
+      if (match && match[1]) {
+        return `https://docs.google.com/uc?export=download&id=${match[1]}`;
+      }
+    }
+    return url;
+  }
+
   // Helper: Extract YouTube embed URL with autoplay
   function getYouTubeEmbedUrl(url) {
     if (!url) return null;
@@ -179,6 +198,16 @@ document.addEventListener("DOMContentLoaded", () => {
       bgMusic.pause();
       bgMusic.src = songPath;
       bgMusic.load();
+    }
+
+    // Google Drive Voice Note Setup
+    const vnUrl = getGoogleDriveStreamUrl(currentData.fileVoiceNote);
+    if (vnUrl && voiceNoteCard && vnAudioPlayer) {
+      voiceNoteCard.style.display = "flex";
+      vnAudioPlayer.src = vnUrl;
+      vnAudioPlayer.load();
+    } else if (voiceNoteCard) {
+      voiceNoteCard.style.display = "none";
     }
 
 
@@ -305,6 +334,12 @@ document.addEventListener("DOMContentLoaded", () => {
     letterPaper.classList.remove("flipped");
 
     bgMusic.pause();
+    if (vnAudioPlayer) {
+      vnAudioPlayer.pause();
+      vnAudioPlayer.currentTime = 0;
+      if (vnPlayIcon) vnPlayIcon.textContent = "▶️";
+      if (vnPlayText) vnPlayText.textContent = "Putar Voice Note";
+    }
 
     // Trigger Farewell Video Modal popup after letter finishes closing animation (750ms)
     setTimeout(() => {
@@ -332,6 +367,33 @@ document.addEventListener("DOMContentLoaded", () => {
     e.stopPropagation();
     letterPaper.classList.remove("flipped");
   });
+
+  // Google Drive Voice Note Play/Pause Handler
+  if (btnVnPlay && vnAudioPlayer) {
+    btnVnPlay.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (vnAudioPlayer.paused) {
+        fadeAudio(bgMusic, 0.1, 500);
+        vnAudioPlayer.play().then(() => {
+          if (vnPlayIcon) vnPlayIcon.textContent = "⏸️";
+          if (vnPlayText) vnPlayText.textContent = "Hentikan Voice Note";
+        }).catch((err) => {
+          console.warn("Gagal memutar voice note Google Drive:", err);
+        });
+      } else {
+        vnAudioPlayer.pause();
+        if (vnPlayIcon) vnPlayIcon.textContent = "▶️";
+        if (vnPlayText) vnPlayText.textContent = "Putar Voice Note";
+        fadeAudio(bgMusic, 1.0, 500);
+      }
+    });
+
+    vnAudioPlayer.addEventListener("ended", () => {
+      if (vnPlayIcon) vnPlayIcon.textContent = "▶️";
+      if (vnPlayText) vnPlayText.textContent = "Putar Voice Note";
+      fadeAudio(bgMusic, 1.0, 500);
+    });
+  }
 
   // ----------------------------------------------------
   // 7. FAREWELL VIDEO MODAL CONTROLLER (SUPPORT HYBRID PLAYERS)
