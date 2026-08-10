@@ -154,10 +154,50 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ----------------------------------------------------
-  // 3. DYNAMIC RECIPIENT LOADER (FETCH WITH CACHE-BUSTING)
+  // 3. DYNAMIC RECIPIENT LOADER WITH UNIQUE CODE RESOLUTION
   // ----------------------------------------------------
+  const RECIPIENT_MAPPING = {
+    "bmb-7k9x": "bambang",
+    "evi-4q8m": "evie",
+    "yip-5p9k": "yip_yankit",
+    "ald-3l7d": "aldo",
+    "fjr-2j8r": "fajar",
+    "adl-8l4e": "adele",
+    "alf-7f9n": "alfin",
+    "bud-4d9u": "budi",
+    "fik-9k3a": "fika",
+    "frm-5r9m": "firman",
+    "msk-4s8k": "maskot",
+    "rks-7k9s": "rikson",
+    "sml-3m8u": "samuel",
+    "sit-9t2i": "siti",
+    "slt-4l9t": "sulasta",
+    "dpt-7t9r": "departemen_ternak",
+    "alt-9t3l": "all_team",
+    // Dukungan retro-kompatibel nama folder
+    "bambang": "bambang",
+    "evie": "evie",
+    "yip_yankit": "yip_yankit",
+    "aldo": "aldo",
+    "fajar": "fajar",
+    "adele": "adele",
+    "alfin": "alfin",
+    "budi": "budi",
+    "fika": "fika",
+    "firman": "firman",
+    "maskot": "maskot",
+    "rikson": "rikson",
+    "samuel": "samuel",
+    "siti": "siti",
+    "sulasta": "sulasta",
+    "departemen_ternak": "departemen_ternak",
+    "all_team": "all_team",
+    "default": "default"
+  };
+
   const urlParams = new URLSearchParams(window.location.search);
-  const recipientKey = (urlParams.get("to") || "").toLowerCase().trim() || "default";
+  const rawParam = (urlParams.get("id") || urlParams.get("to") || "").toLowerCase().trim();
+  const recipientKey = RECIPIENT_MAPPING[rawParam] || "default";
 
   fetch(`assets/recipients/${recipientKey}/config.json?v=${Date.now()}`)
     .then((response) => {

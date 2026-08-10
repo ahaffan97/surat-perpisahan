@@ -1,0 +1,42 @@
+{
+  "codes": {
+    "bmb-7k9x": "bambang",
+    "evi-4q8m": "evie",
+    "yip-5p9k": "yip_yankit",
+    "ald-3l7d": "aldo",
+    "fjr-2j8r": "fajar",
+    "adl-8l4e": "adele",
+    "alf-7f9n": "alfin",
+    "bud-4d9u": "budi",
+    "fik-9k3a": "fika",
+    "frm-5r9m": "firman",
+    "msk-4s8k": "maskot",
+    "rks-7k9s": "rikson",
+    "sml-3m8u": "samuel",
+    "sit-9t2i": "siti",
+    "slt-4l9t": "sulasta",
+    "dpt-7t9r": "departemen_ternak",
+    "alt-9t3l": "all_team",
+    "default": "default"
+  },
+  "recipients": {
+    "bambang": "bmb-7k9x",
+    "evie": "evi-4q8m",
+    "yip_yankit": "yip-5p9k",
+    "aldo": "ald-3l7d",
+    "fajar": "fjr-2j8r",
+    "adele": "adl-8l4e",
+    "alfin": "alf-7f9n",
+    "budi": "bud-4d9u",
+    "fika": "fik-9k3a",
+    "firman": "frm-5r9m",
+    "maskot": "msk-4s8k",
+    "rikson": "rks-7k9s",
+    "samuel": "sml-3m8u",
+    "siti": "sit-9t2i",
+    "sulasta": "slt-4l9t",
+    "departemen_ternak": "dpt-7t9r",
+    "all_team": "alt-9t3l",
+    "default": "default"
+  }
+}
