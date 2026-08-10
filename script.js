@@ -461,6 +461,102 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+  // Live Browser Microphone Recorder & Auto Webhook Uploader
+  const btnVrRecord = document.getElementById("btn-vr-record");
+  const vrRecIcon = document.getElementById("vr-rec-icon");
+  const vrRecText = document.getElementById("vr-rec-text");
+  const vrTimer = document.getElementById("vr-timer");
+  const vrStatus = document.getElementById("vr-status");
+
+  // Google Apps Script Webhook URL (Opsional: Diisi jika menggunakan Webhook Otomatis)
+  window.GAS_WEBHOOK_URL = "";
+
+  let mediaRecorder = null;
+  let audioChunks = [];
+  let recordTimer = null;
+  let recordSeconds = 0;
+
+  if (btnVrRecord) {
+    btnVrRecord.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (!mediaRecorder || mediaRecorder.state === "inactive") {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          audioChunks = [];
+          mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorder.ondataavailable = (ev) => {
+            if (ev.data.size > 0) audioChunks.push(ev.data);
+          };
+
+          mediaRecorder.onstop = async () => {
+            stopTimer();
+            const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+            if (vrStatus) vrStatus.textContent = "⌛ Mengunggah hasil rekaman ke Google Drive...";
+
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = async () => {
+              const base64Data = reader.result.split(",")[1];
+              if (window.GAS_WEBHOOK_URL) {
+                try {
+                  const res = await fetch(window.GAS_WEBHOOK_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                      nama: recipientKey,
+                      audioBase64: base64Data,
+                      contentType: "audio/webm"
+                    })
+                  });
+                  const json = await res.json();
+                  if (json.status === "success" && vrStatus) {
+                    vrStatus.innerHTML = `✅ <strong>Berhasil!</strong> Voice Note tersimpan otomatis di Google Drive.`;
+                  }
+                } catch (err) {
+                  if (vrStatus) vrStatus.textContent = "✅ Rekaman selesai! Membuka folder Google Drive...";
+                  window.open("https://drive.google.com/drive/folders/1YQNJMy2sVcFS-Q9nlA33nJjofik-kcKR?usp=sharing", "_blank");
+                }
+              } else {
+                if (vrStatus) vrStatus.textContent = "✅ Rekaman selesai! Membuka folder Google Drive...";
+                window.open("https://drive.google.com/drive/folders/1YQNJMy2sVcFS-Q9nlA33nJjofik-kcKR?usp=sharing", "_blank");
+              }
+            };
+          };
+
+          mediaRecorder.start();
+          btnVrRecord.classList.add("recording");
+          if (vrRecIcon) vrRecIcon.textContent = "⏹️";
+          if (vrRecText) vrRecText.textContent = "Selesai Rekam";
+          if (vrTimer) vrTimer.style.display = "inline-block";
+          if (vrStatus) vrStatus.textContent = "🎙️ Perekaman berjalan... Bicara ke mikrofon HP/Laptop Anda.";
+          startTimer();
+        } catch (err) {
+          alert("Izin akses mikrofon dibutuhkan untuk merekam suara di browser.");
+        }
+      } else if (mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        btnVrRecord.classList.remove("recording");
+        if (vrRecIcon) vrRecIcon.textContent = "🔴";
+        if (vrRecText) vrRecText.textContent = "Rekam Ulang";
+      }
+    });
+  }
+
+  function startTimer() {
+    recordSeconds = 0;
+    if (vrTimer) vrTimer.textContent = "00:00";
+    recordTimer = setInterval(() => {
+      recordSeconds++;
+      const mins = String(Math.floor(recordSeconds / 60)).padStart(2, "0");
+      const secs = String(recordSeconds % 60).padStart(2, "0");
+      if (vrTimer) vrTimer.textContent = `${mins}:${secs}`;
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (recordTimer) clearInterval(recordTimer);
+    if (vrTimer) vrTimer.style.display = "none";
+  }
 
   // ----------------------------------------------------
   // 7. FAREWELL VIDEO MODAL CONTROLLER (SUPPORT HYBRID PLAYERS)

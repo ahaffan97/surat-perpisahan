@@ -1583,6 +1583,83 @@ body {
   box-shadow: 0 8px 22px rgba(212, 175, 55, 0.6);
 }
 
+.voice-recorder-card {
+  margin: 10px 0;
+  padding: 14px 20px;
+  background: radial-gradient(circle at 50% 50%, #201209 0%, #110904 100%);
+  border: 1.5px solid #d4af37;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 440px;
+  width: 100%;
+}
+
+.vr-title {
+  color: #fde68a;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.vr-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-vr-record {
+  background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 25px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+  transition: var(--transition-smooth);
+  outline: none;
+}
+
+.btn-vr-record:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.6);
+}
+
+.btn-vr-record.recording {
+  animation: pulseRec 1.2s infinite;
+  background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+}
+
+@keyframes pulseRec {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.vr-timer {
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #ef4444;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.vr-status {
+  font-size: 0.85rem;
+  color: #d1d5db;
+  text-align: center;
+}
+
 .btn-gdrive-upload {
   display: inline-flex;
   align-items: center;
