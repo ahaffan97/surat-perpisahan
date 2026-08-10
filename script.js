@@ -698,22 +698,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (vrTimer) vrTimer.style.display = "none";
   }
 
-  // Helper: Navigasi Modal Sinematik 4-Halaman dengan Step Tab Active Update
+  // Helper: Navigasi Modal Sinematik 3-Halaman (Video ➔ Hall of Memory Chat Room ➔ Kontak)
   function showModalPage(pageId) {
-    const pages = ["page-video", "page-reply-form", "page-hall-of-memory", "page-contacts"];
+    const pages = ["page-video", "page-hall-of-memory", "page-contacts"];
     pages.forEach((p) => {
       const el = document.getElementById(p);
       if (el) {
         el.style.display = (p === pageId) ? "flex" : "none";
-      }
-    });
-
-    // Update kelas active pada tab bar navigasi
-    document.querySelectorAll(".step-tab").forEach((tab) => {
-      if (tab.dataset.target === pageId) {
-        tab.classList.add("active");
-      } else {
-        tab.classList.remove("active");
       }
     });
   }
@@ -772,18 +763,14 @@ document.addEventListener("DOMContentLoaded", () => {
     lastRecordedBlobUrl = null;
   };
 
-  // Bulletproof Event Delegation untuk Semua Tombol Navigasi Modal 4-Langkah & Submit Reply
+  // Bulletproof Event Delegation untuk Semua Tombol Navigasi Modal (Video ➔ Chat Room ➔ Kontak)
   document.addEventListener("click", (e) => {
-    const btn = e.target.closest("#btn-goto-reply, #btn-skip-to-hom, #btn-goto-contacts, #btn-restart-flow, #btn-submit-reply, .step-tab");
+    const btn = e.target.closest("#btn-goto-reply, #btn-skip-to-hom, #btn-goto-contacts, #btn-restart-flow, #btn-chat-send");
     if (!btn) return;
 
     e.stopPropagation();
     const btnId = btn.id;
-    if (btnId === "btn-submit-reply") {
-      handleSubmitReply();
-    } else if (btnId === "btn-goto-reply") {
-      showModalPage("page-reply-form");
-    } else if (btnId === "btn-skip-to-hom") {
+    if (btnId === "btn-goto-reply" || btnId === "btn-skip-to-hom") {
       showModalPage("page-hall-of-memory");
     } else if (btnId === "btn-goto-contacts") {
       showModalPage("page-contacts");
