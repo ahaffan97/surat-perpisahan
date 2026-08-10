@@ -588,7 +588,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (vrTimer) vrTimer.style.display = "none";
   }
 
-  // Helper: Navigasi Modal Sinematik 4-Halaman
+  // Helper: Navigasi Modal Sinematik 4-Halaman dengan Step Tab Active Update
   function showModalPage(pageId) {
     const pages = ["page-video", "page-reply-form", "page-hall-of-memory", "page-contacts"];
     pages.forEach((p) => {
@@ -597,7 +597,30 @@ document.addEventListener("DOMContentLoaded", () => {
         el.style.display = (p === pageId) ? "flex" : "none";
       }
     });
+
+    // Update kelas active pada tab bar navigasi
+    document.querySelectorAll(".step-tab").forEach((tab) => {
+      if (tab.dataset.target === pageId) {
+        tab.classList.add("active");
+      } else {
+        tab.classList.remove("active");
+      }
+    });
   }
+
+  // Listener untuk Tab Bar Navigasi Modal
+  document.querySelectorAll(".step-tab").forEach((tab) => {
+    tab.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const targetPage = tab.dataset.target;
+      if (targetPage) {
+        showModalPage(targetPage);
+        if (targetPage === "page-contacts") {
+          stopAllVoiceNotes();
+        }
+      }
+    });
+  });
 
   // Handle Submit Reply (Name, Text, Recorded Voice Note)
   if (btnSubmitReply) {
