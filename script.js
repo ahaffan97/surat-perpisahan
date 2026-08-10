@@ -36,6 +36,19 @@ document.addEventListener("DOMContentLoaded", () => {
       fileVoiceNote: "assets/recipients/evie/audio/voice_note.wav",
       fileVideo: "assets/video/farewell.mp4"
     },
+    fika: {
+      namaLengkap: "Fika",
+      pesan: "Terima kasih yang mendalam untuk Fika atas seluruh kebersamaan, dukungan, dan memori indah yang telah kita ukir bersama di PT. GIJ. Setiap tawa, kerjasama, dan cerita yang kita lalui menjadi bagian tak terpisahkan dari perjalanan berharga ini. Semoga kebaikan, semangat, dan energi positif ini selalu menyertai setiap langkahmu menuju puncak kesuksesan.",
+      pesanBelakang: "Perpisahan ini bukanlah akhir dari segalanya, melainkan awal dari babak baru yang penuh dengan kebahagiaan dan kejayaan. Semoga kesuksesan selalu menyertaimu di manapun berpijak!",
+      fotoUtama: [
+        { src: "assets/recipients/fika/foto/wide_team_memory.png", caption: "Perayaan Perpisahan Tim 🎉", diari: "Setiap momen kebersamaan adalah kenangan indah yang tak akan terlupakan." },
+        { src: "assets/recipients/fika/foto/wide_office_moments.png", caption: "Momen Kebersamaan Kantor ☕", diari: "Canda tawa dan kerja keras bersama tim." }
+      ],
+      fotoBelakang: "",
+      fileLagu: "assets/audio/sampai_jumpa.mp3",
+      fileVoiceNote: "assets/recipients/fika/audio/voice_note.wav",
+      fileVideo: "assets/video/farewell.mp4"
+    },
     default: {
       namaLengkap: "Sahabat Seperjuangan",
       pesan: "Terima kasih yang mendalam untuk seluruh kebersamaan, dukungan, dan memori indah yang telah kita ukir bersama di PT. GIJ. Setiap tawa, tantangan, dan cerita yang kita lalui menjadi bagian tak terpisahkan dari perjalanan berharga ini.",
