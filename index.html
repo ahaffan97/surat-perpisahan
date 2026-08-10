@@ -343,19 +343,6 @@
                   <!-- Pesan singkat di-render oleh JS -->
                 </p>
 
-                <!-- Pemutar Voice Note Google Drive -->
-                <div class="voice-note-card" id="voice-note-card" style="display: none;">
-                  <div class="vn-header">
-                    <span class="vn-icon">🎙️</span>
-                    <span class="vn-title">Voice Note Kenangan (Google Drive)</span>
-                  </div>
-                  <button class="btn-vn-play" id="btn-vn-play" type="button">
-                    <span id="vn-play-icon">▶️</span>
-                    <span id="vn-play-text">Putar Voice Note</span>
-                  </button>
-                  <audio id="vn-audio-player" preload="none"></audio>
-                </div>
-
                 <div class="back-quote-note">
                   ✨ <em>"Sampai jumpa di Puncak Sukses Selanjutnya!"</em>
                 </div>
@@ -468,8 +455,27 @@
         <iframe id="youtube-video-player" class="youtube-iframe-player" src="" title="YouTube Farewell Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
 
-      <!-- SECTION BALASAN LINKEDIN & WHATSAPP SETELAH VIDEO FAREWELL -->
-      <div class="video-contact-section" id="video-contact-section">
+      <!-- LANGKAH 1 SETELAH VIDEO: VOICE NOTE GOOGLE DRIVE PENERIMA -->
+      <div class="video-vn-section" id="video-vn-section">
+        <h3 class="video-contact-title">🎙️ Pesan Suara / Voice Note Kenangan (Google Drive):</h3>
+        <div class="voice-note-card" id="voice-note-card">
+          <div class="vn-header">
+            <span class="vn-icon">🎙️</span>
+            <span class="vn-title">Voice Note Kenangan</span>
+          </div>
+          <button class="btn-vn-play" id="btn-vn-play" type="button">
+            <span id="vn-play-icon">▶️</span>
+            <span id="vn-play-text">Putar Voice Note</span>
+          </button>
+          <audio id="vn-audio-player" preload="none"></audio>
+        </div>
+        <button class="btn-next-step" id="btn-next-to-contacts" type="button">
+          Lanjut Balas via WhatsApp & LinkedIn ➔
+        </button>
+      </div>
+
+      <!-- LANGKAH 2: BALASAN LINKEDIN & WHATSAPP SETELAH VOICE NOTE -->
+      <div class="video-contact-section" id="video-contact-section" style="display: none;">
         <h3 class="video-contact-title">💬 Kirim Balasan & Tetap Terhubung Bersama Achmad Hairil Affan:</h3>
         <div class="social-buttons-container horizontal">
           <a id="video-wa-button" href="#" target="_blank" rel="noopener noreferrer" class="btn-social btn-wa">

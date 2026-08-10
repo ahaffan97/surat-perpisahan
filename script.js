@@ -112,6 +112,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const youtubePlayer = document.getElementById("youtube-video-player");
   const videoSource = document.getElementById("video-source");
   const videoWaButton = document.getElementById("video-wa-button");
+  const videoVnSection = document.getElementById("video-vn-section");
+  const videoContactSection = document.getElementById("video-contact-section");
+  const btnNextToContacts = document.getElementById("btn-next-to-contacts");
 
   let albumPhotos = [];
 
@@ -403,6 +406,9 @@ document.addEventListener("DOMContentLoaded", () => {
     videoModal.classList.add("active");
     videoModal.setAttribute("aria-hidden", "false");
 
+    if (videoVnSection) videoVnSection.style.display = "flex";
+    if (videoContactSection) videoContactSection.style.display = "none";
+
     if (videoStage && videoStage.classList.contains("is-youtube")) {
       if (youtubePlayer && youtubePlayer.src) {
         let currentSrc = youtubePlayer.src;
@@ -443,6 +449,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (videoClose) videoClose.addEventListener("click", closeVideoModal);
   if (videoBackdrop) videoBackdrop.addEventListener("click", closeVideoModal);
+
+  if (btnNextToContacts) {
+    btnNextToContacts.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (videoVnSection) videoVnSection.style.display = "none";
+      if (videoContactSection) videoContactSection.style.display = "flex";
+      if (vnAudioPlayer) {
+        vnAudioPlayer.pause();
+        if (vnPlayIcon) vnPlayIcon.textContent = "▶️";
+        if (vnPlayText) vnPlayText.textContent = "Putar Voice Note";
+      }
+    });
+  }
 
   // ----------------------------------------------------
   // 8. LIGHTBOX SLIDESHOW CONTROLLER

@@ -1552,6 +1552,37 @@ body {
 }
 
 
+.video-vn-section {
+  margin-top: 16px;
+  width: 100%;
+  max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-next-step {
+  background: linear-gradient(135deg, #b8860b 0%, #d4af37 100%);
+  color: #1a0e07;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+  transition: var(--transition-smooth);
+  margin-top: 6px;
+  outline: none;
+}
+
+.btn-next-step:hover {
+  background: linear-gradient(135deg, #d4af37 0%, #fde68a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(212, 175, 55, 0.6);
+}
+
 /* ==========================================
    VOICE NOTE GOOGLE DRIVE CARD STYLING
    ========================================== */
