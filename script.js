@@ -401,6 +401,23 @@ document.addEventListener("DOMContentLoaded", () => {
     closeLetterAndShowVideo();
   });
 
+  const btnFinishLetter = document.getElementById("btn-finish-letter");
+  const btnFinishLetterFront = document.getElementById("btn-finish-letter-front");
+
+  if (btnFinishLetter) {
+    btnFinishLetter.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeLetterAndShowVideo();
+    });
+  }
+
+  if (btnFinishLetterFront) {
+    btnFinishLetterFront.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeLetterAndShowVideo();
+    });
+  }
+
   backdropOverlay.addEventListener("click", () => {
     if (isEnvelopeOpen && !lightboxModal.classList.contains("active") && !videoModal.classList.contains("active")) {
       closeLetterAndShowVideo();
