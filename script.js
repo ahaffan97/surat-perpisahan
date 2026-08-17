@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const backMessage = document.getElementById("back-message");
 
   const bgMusic = document.getElementById("bg-music");
+  let activeYoutubeEmbedUrl = null;
 
   // Lightbox Modal DOM
   const lightboxModal = document.getElementById("lightbox-modal");
@@ -263,14 +264,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Farewell Video Setup: Detect YouTube link vs Local MP4
     const rawVideoPath = currentData.fileVideo || "assets/video/farewell.mp4";
-    const youtubeEmbedUrl = getYouTubeEmbedUrl(rawVideoPath);
+    activeYoutubeEmbedUrl = getYouTubeEmbedUrl(rawVideoPath);
 
-    if (youtubeEmbedUrl) {
+    // Kosongkan src iframe YouTube agar TIDAK PERNAH memutar video saat surat pertama kali dibuka
+    if (youtubePlayer) youtubePlayer.src = "";
+
+    if (activeYoutubeEmbedUrl) {
       if (videoStage) videoStage.classList.add("is-youtube");
-      if (youtubePlayer) youtubePlayer.src = youtubeEmbedUrl;
     } else {
       if (videoStage) videoStage.classList.remove("is-youtube");
-      if (youtubePlayer) youtubePlayer.src = "";
       if (videoSource) videoSource.src = rawVideoPath;
       if (videoPlayer) {
         videoPlayer.src = rawVideoPath;
@@ -798,15 +800,8 @@ document.addEventListener("DOMContentLoaded", () => {
     showModalPage("page-video");
 
     if (videoStage && videoStage.classList.contains("is-youtube")) {
-      if (youtubePlayer && youtubePlayer.src) {
-        let currentSrc = youtubePlayer.src;
-        if (!currentSrc.includes("autoplay=1")) {
-          youtubePlayer.src = currentSrc + (currentSrc.includes("?") ? "&autoplay=1" : "?autoplay=1");
-        } else {
-          // Re-trigger player src to force fresh play
-          youtubePlayer.src = currentSrc;
-        }
-        // Force YouTube IFrame API play command
+      if (youtubePlayer && activeYoutubeEmbedUrl) {
+        youtubePlayer.src = activeYoutubeEmbedUrl;
         try {
           youtubePlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
         } catch (err) {
@@ -839,9 +834,8 @@ document.addEventListener("DOMContentLoaded", () => {
       videoPlayer.pause();
     }
     if (youtubePlayer) {
-      // Reload iframe src to stop YouTube video audio playback when modal is closed
-      const currentSrc = youtubePlayer.src;
-      youtubePlayer.src = currentSrc;
+      // Kosongkan iframe src agar video YouTube mati total saat modal ditutup
+      youtubePlayer.src = "";
     }
   }
 
