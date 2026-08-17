@@ -140,11 +140,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return url;
   }
 
-  // Helper: Extract YouTube embed URL with autoplay
+  // Helper: Extract YouTube embed URL with autoplay (supports Shorts, Watch, Embed, and short links)
   function getYouTubeEmbedUrl(url) {
     if (!url) return null;
     if (url.includes("youtube.com") || url.includes("youtu.be")) {
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
       const match = url.match(regExp);
       if (match && match[2].length === 11) {
         return `https://www.youtube.com/embed/${match[2]}?autoplay=1&enablejsapi=1&rel=0`;
