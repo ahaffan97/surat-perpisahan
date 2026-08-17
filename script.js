@@ -382,7 +382,32 @@ document.addEventListener("DOMContentLoaded", () => {
     if (instructionBanner) instructionBanner.classList.remove("hidden");
     letterPaper.classList.remove("flipped");
 
-    bgMusic.pause();
+    // Helper: Fade-out lagu latar secara halus saat beralih ke video YouTube
+    function fadeOutAudio(audioElement, duration = 600, callback) {
+      if (!audioElement || audioElement.paused) {
+        if (callback) callback();
+        return;
+      }
+      const initialVolume = audioElement.volume || 1;
+      const stepTime = 50;
+      const steps = duration / stepTime;
+      const volumeStep = initialVolume / steps;
+
+      const fadeInterval = setInterval(() => {
+        if (audioElement.volume - volumeStep > 0) {
+          audioElement.volume = Math.max(0, audioElement.volume - volumeStep);
+        } else {
+          audioElement.volume = 0;
+          audioElement.pause();
+          audioElement.volume = initialVolume; // Reset volume untuk pengulangan
+          clearInterval(fadeInterval);
+          if (callback) callback();
+        }
+      }, stepTime);
+    }
+
+    fadeOutAudio(bgMusic, 600);
+
     if (vnAudioPlayer) {
       vnAudioPlayer.pause();
       vnAudioPlayer.currentTime = 0;
@@ -782,6 +807,15 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentSrc = youtubePlayer.src;
         if (!currentSrc.includes("autoplay=1")) {
           youtubePlayer.src = currentSrc + (currentSrc.includes("?") ? "&autoplay=1" : "?autoplay=1");
+        } else {
+          // Re-trigger player src to force fresh play
+          youtubePlayer.src = currentSrc;
+        }
+        // Force YouTube IFrame API play command
+        try {
+          youtubePlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        } catch (err) {
+          console.warn("YouTube postMessage play exception:", err);
         }
       }
     } else {
