@@ -339,6 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
       backdropOverlay.classList.add("active");
 
       try {
+        bgMusic.muted = false;
         bgMusic.volume = 1.0;
         const playPromise = bgMusic.play();
         if (playPromise !== undefined) {
@@ -382,31 +383,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (instructionBanner) instructionBanner.classList.remove("hidden");
     letterPaper.classList.remove("flipped");
 
-    // Helper: Fade-out lagu latar secara halus saat beralih ke video YouTube
-    function fadeOutAudio(audioElement, duration = 600, callback) {
-      if (!audioElement || audioElement.paused) {
-        if (callback) callback();
-        return;
-      }
-      const initialVolume = audioElement.volume || 1;
-      const stepTime = 50;
-      const steps = duration / stepTime;
-      const volumeStep = initialVolume / steps;
-
-      const fadeInterval = setInterval(() => {
-        if (audioElement.volume - volumeStep > 0) {
-          audioElement.volume = Math.max(0, audioElement.volume - volumeStep);
-        } else {
-          audioElement.volume = 0;
-          audioElement.pause();
-          audioElement.volume = initialVolume; // Reset volume untuk pengulangan
-          clearInterval(fadeInterval);
-          if (callback) callback();
-        }
-      }, stepTime);
+    // Hentikan & bisukan lagu latar secara instan agar tidak bentrok dengan video YouTube di HP
+    if (bgMusic) {
+      bgMusic.pause();
+      bgMusic.muted = true;
+      bgMusic.currentTime = 0;
     }
-
-    fadeOutAudio(bgMusic, 600);
 
     if (vnAudioPlayer) {
       vnAudioPlayer.pause();
@@ -797,6 +779,19 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   function openVideoModal() {
     if (!videoModal) return;
+
+    // MATIKAN & BISUKAN MUSIK LATAR UTAMA SECARA INSTAN AGAR TIDAK BENTROK DI HP
+    if (bgMusic) {
+      bgMusic.pause();
+      bgMusic.muted = true;
+      bgMusic.currentTime = 0;
+    }
+    if (vnAudioPlayer) {
+      vnAudioPlayer.pause();
+      vnAudioPlayer.currentTime = 0;
+    }
+    stopAllVoiceNotes();
+
     videoModal.classList.add("active");
     videoModal.setAttribute("aria-hidden", "false");
 
